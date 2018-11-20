@@ -40,7 +40,6 @@ void pause(){
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
-
     ifstream arq;
     arq.open("xispa.txt");
     if (!arq){
@@ -59,28 +58,54 @@ int main()
         arq>>rot_ver[i];
 
     arq >> q1;                      //leitura da quantia de arestas
+    string rotulo_aresta,rotulo_vertice;
+    int x,m[2];
+    for(int i=0;i<q1;i++){
+        arq>>rotulo_aresta;          //leitura do rotulo da aresta
+    for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
+        arq>>rotulo_vertice;
+        m[j] = distance(rot_ver, find(rot_ver, rot_ver + q, rotulo_vertice));
+    }
+    arq>>peso[m[0]][m[1]];            //armazenando o peso na matriz
+    peso[m[1]][m[0]]=peso[m[0]][m[1]];//leia a linha acima
+
+    rot_ar[m[0]][m[1]]=rotulo_aresta; //mesma coisa que o peso mas o rótulo da aresta
+    rot_ar[m[1]][m[0]]=rotulo_aresta; //leia linha acima
+    }
 
 
-//mostra de valores apenas para DEBUG
     cout<<"Vértices:\n";
-    for(int i=0;i<q;i++){
+    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
         cout<<rot_ver[i]<<endl;
     }
-    cout<<"Pesos:\n";
-    for(int i=0;i<q;i++){
+    cout<<"\nPesos:\n\n\t|\t";
+    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+        cout<<rot_ver[i]<<"\t|\t";
+    }
+    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+        cout<<rot_ver[i]<<"\t|\t";
         for(int j=0;j<q;j++){
             cout<<peso[i][j]<<"\t|\t";
         }
         cout<<endl;
     }
-    cout<<"Arestas:\n";
-    for(int i=0;i<q;i++){
+
+    cout<<"\nArestas:\n\n\t|\t";
+
+        for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+        cout<<rot_ver[i]<<"\t|\t";
+    }
+    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+        cout<<rot_ver[i]<<"\t|\t";
         for(int j=0;j<q;j++){
             cout<<rot_ar[i][j]<<"\t|\t";
         }
         cout<<endl;
 }
-    pause();
 }
 
 //    char op;
