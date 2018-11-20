@@ -4,6 +4,7 @@
 #include <clocale>          //aceitar acentuação
 #include <algorithm>        //usar fill
 #include <cctype>           //usar toupper
+#include <vector>
 using namespace std;
 void menu(){
     system("cls");
@@ -48,15 +49,17 @@ int main()
     }
     int q,q1;
     arq >> q;                       //leitura da quantia de vértices
-    string rot_ver[q];              //vetor com o rótulo dos vertices
+    vector<string> rot_ver;         //vetor com o rótulo dos vertices
     string rot_ar[q][q];            //matriz com o rótulo das arestas
     int peso[q][q];                 //matriz com o peso das arestas
 
     fill(peso[0], peso[q]+q, 0);    //preenche matriz peso com valor 0 em todos
 
-    for (int i=0; i<q; i++)         //leitura do rótulo dos vértices
-        arq>>rot_ver[i];
-
+    string rotulo;
+    for (int i=0; i<q; i++){         //leitura do rótulo dos vértices
+        arq>>rotulo;
+        rot_ver.push_back(rotulo);
+    }
     arq >> q1;                      //leitura da quantia de arestas
     string rotulo_aresta,rotulo_vertice;
     int x,m[2];
@@ -64,7 +67,7 @@ int main()
         arq>>rotulo_aresta;          //leitura do rotulo da aresta
     for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
         arq>>rotulo_vertice;
-        m[j] = distance(rot_ver, find(rot_ver, rot_ver + q, rotulo_vertice));
+        m[j] = distance(rot_ver.begin(), find(rot_ver.begin(), rot_ver.end(), rotulo_vertice));;
     }
     arq>>peso[m[0]][m[1]];            //armazenando o peso na matriz
     peso[m[1]][m[0]]=peso[m[0]][m[1]];//leia a linha acima
@@ -75,16 +78,16 @@ int main()
 
 
     cout<<"Vértices:\n";
-    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+    for(int i=0;i<rot_ver.size();i++){
         cout<<rot_ver[i]<<endl;
     }
     cout<<"\nPesos:\n\n\t|\t";
-    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+    for(int i=0;i<rot_ver.size();i++){
         cout<<rot_ver[i]<<"\t|\t";
     }
     cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+    for(int i=0;i<rot_ver.size();i++){
         cout<<rot_ver[i]<<"\t|\t";
         for(int j=0;j<q;j++){
             cout<<peso[i][j]<<"\t|\t";
@@ -94,12 +97,12 @@ int main()
 
     cout<<"\nArestas:\n\n\t|\t";
 
-        for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+        for(int i=0;i<rot_ver.size();i++){
         cout<<rot_ver[i]<<"\t|\t";
     }
     cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-    for(int i=0;i<sizeof(rot_ver)/sizeof(rot_ver[0]);i++){
+    for(int i=0;i<rot_ver.size();i++){
         cout<<rot_ver[i]<<"\t|\t";
         for(int j=0;j<q;j++){
             cout<<rot_ar[i][j]<<"\t|\t";
