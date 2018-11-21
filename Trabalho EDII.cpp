@@ -9,7 +9,6 @@ using namespace std;
 void menu(){
     system("cls");
     cout << "\n----------------MENU----------------\n\n"
-         << "\tL - Leitura\n"
          << "\tA - Árvore Geradora Mínima\n"
          << "\tG - Grau\n"
          << "\tF - Vértices Finais\n"
@@ -18,6 +17,13 @@ void menu(){
          << "\tS - Sequência de Graus\n"
          << "\tE - Encerrar Programa\n"
          << "\n----------------------------------------\n\n";
+}
+
+int buscaVertice(vector<string> v,string s){
+    for(int i=0;i<v.size();i++)
+        if(v[i]==s)
+            return i;
+    return -1;
 }
 
 void agv(){}
@@ -31,8 +37,6 @@ void incid(){}
 void circuito(){}
 
 void SeqGraus(){}
-
-void encerrar(){}
 
 void pause(){
     system("pause");
@@ -67,7 +71,7 @@ int main()
         arq>>rotulo_aresta;          //leitura do rotulo da aresta
     for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
         arq>>rotulo_vertice;
-        m[j] = distance(rot_ver.begin(), find(rot_ver.begin(), rot_ver.end(), rotulo_vertice));;
+        m[j] = buscaVertice(rot_ver,rotulo_vertice);
     }
     arq>>peso[m[0]][m[1]];            //armazenando o peso na matriz
     peso[m[1]][m[0]]=peso[m[0]][m[1]];//leia a linha acima
@@ -76,75 +80,89 @@ int main()
     rot_ar[m[1]][m[0]]=rotulo_aresta; //leia linha acima
     }
 
-
-    cout<<"Vértices:\n";
-    for(int i=0;i<rot_ver.size();i++){
-        cout<<rot_ver[i]<<endl;
-    }
-    cout<<"\nPesos:\n\n\t|\t";
-    for(int i=0;i<rot_ver.size();i++){
-        cout<<rot_ver[i]<<"\t|\t";
-    }
-    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-
-    for(int i=0;i<rot_ver.size();i++){
-        cout<<rot_ver[i]<<"\t|\t";
-        for(int j=0;j<q;j++){
-            cout<<peso[i][j]<<"\t|\t";
-        }
-        cout<<endl;
-    }
-
-    cout<<"\nArestas:\n\n\t|\t";
-
-        for(int i=0;i<rot_ver.size();i++){
-        cout<<rot_ver[i]<<"\t|\t";
-    }
-    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-
-    for(int i=0;i<rot_ver.size();i++){
-        cout<<rot_ver[i]<<"\t|\t";
-        for(int j=0;j<q;j++){
-            cout<<rot_ar[i][j]<<"\t|\t";
-        }
-        cout<<endl;
-}
-}
-
-//    char op;
-//    do{
-//        menu();
-//        cout << "\tSelecione uma opção: ";
-//        cin >> op;
-//        op=toupper(op);
-//        switch(op){
-//            case 'L':
-//                leitura();
-//                break;
-//            case 'A':
+    char op;
+    do{
+        int num,cont=0;
+        string s;
+        menu();
+        cout << "\tSelecione uma opção: ";
+        cin >> op;
+        op=toupper(op);
+        switch(op){
+            case 'A':
 //                agf();
-//                break;
-//            case 'G':
+                break;
+            case 'G':
 //                grau();
-//                break;
-//            case 'F':
+            cout<<"Qual o vértice desejado?\n";
+            cin>>s;
+            num=buscaVertice(rot_ver,s);
+            if(num<0)
+                cout<<"Rótulo não existe.\n";
+            else{
+                for(int i=0;i<rot_ver.size();i++){
+                    if(peso[num][i]>0)
+                        cont++;
+                }
+                cout<<"Grau de "<<rot_ver[num]<<": "<<cont<<"\n";
+            }
+            pause();
+            break;
+            case 'F':
 //                finais();
-//                break;
-//            case 'I':
+                break;
+            case 'I':
 //                incid();
-//                break;
-//            case 'C':
+                break;
+            case 'C':
 //                circuito();
-//                break;
-//            case 'S':
+                break;
+            case 'S':
 //                SeqGraus();
-//                break;
-//            case 'E':
-//                return 0;
-//            default:
-//                cout << "\n\tEscolha uma opção válida: \n\n\t";
-//                system("pause");
-//        }
-//    }while(true);
-//    return 0;
-//}
+                break;
+            case 'E':
+                exit(0);
+            break;
+            case 'D': //opção escondida de debug
+                cout<<"Vértices:\n";
+                for(int i=0;i<rot_ver.size();i++){
+                    cout<<rot_ver[i]<<' ';
+                }
+                cout<<"\nPesos:\n\n\t|\t";
+                for(int i=0;i<rot_ver.size();i++){
+                    cout<<rot_ver[i]<<"\t|\t";
+                }
+                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+                for(int i=0;i<rot_ver.size();i++){
+                    cout<<rot_ver[i]<<"\t|\t";
+                    for(int j=0;j<q;j++){
+                        cout<<peso[i][j]<<"\t|\t";
+                    }
+                    cout<<endl;
+                }
+
+                cout<<"\nArestas:\n\n\t|\t";
+
+                    for(int i=0;i<rot_ver.size();i++){
+                    cout<<rot_ver[i]<<"\t|\t";
+                }
+                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+                for(int i=0;i<rot_ver.size();i++){
+                    cout<<rot_ver[i]<<"\t|\t";
+                    for(int j=0;j<q;j++){
+                        cout<<rot_ar[i][j]<<"\t|\t";
+                    }
+                    cout<<endl;
+                }
+                pause();
+                break;
+
+            default:
+                cout << "\n\tEscolha uma opção válida: \n\n\t";
+                break;
+        }
+    }while(true);
+}
+
