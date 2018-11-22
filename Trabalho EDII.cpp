@@ -10,6 +10,7 @@ void menu(){
     system("cls");
     cout << "\n----------------MENU----------------\n\n"
          << "\tA - Árvore Geradora Mínima\n"
+         << "\tM - Mostrar Grafo\n"
          << "\tG - Grau\n"
          << "\tF - Vértices Finais\n"
          << "\tI - Incidência\n"
@@ -143,7 +144,7 @@ void SeqGraus(grafo g)
     cout << "\n\n";
 }
 
-void debug(grafo g,char op){
+void mostra(grafo g,char op){
     switch(op){
         case 'v':
             cout << "Vértices: ";                //só passando pra melhorar a legibilidade
@@ -209,6 +210,23 @@ int main()
             case 'A':
 //                agf();
                 break;
+            case 'M':
+                cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
+                while (cout << "\n\tDeseja ver: " && cin >> num && num!=1 && num!=2 && num!=3)
+                    cout << "\tInválido\n";
+                switch(num){
+                    case 0:
+                        mostra(g,'v');
+                        break;
+                    case 1:
+                        mostra(g,'p');
+                        break;
+                    case 2:
+                        mostra(g,'a');
+                        break;
+                }
+                mostra(g,'h');
+                break;
             case 'G':
                 grau(g);
                 break;
@@ -226,27 +244,9 @@ int main()
                 break;
             case 'E':
                 exit(0);
-           case 'D':       //opção escondida de debug
-                cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
-                while (cout << "\n\tDeseja ver: " && cin >> num && num!=1 && num!=2 && num!=3)
-                    cout << "\tInválido\n";
-                switch(num){
-                    case 0:
-                        debug(g,'v');
-                        break;
-                    case 1:
-                        debug(g,'p');
-                        break;
-                    case 2:
-                        debug(g,'a');
-                        break;
-                }
-                debug(g,'h');
-            break;
             default:
                 cout << "\n\tEscolha uma opção válida: \n\n\t";
         }
         system("pause");
     }while(true);
 }
-
