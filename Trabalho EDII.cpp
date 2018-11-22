@@ -98,6 +98,7 @@ int main()
     do{
         int num,cont=0, i, j, aux=vet.size();
         vector<int> graus;
+        vector<string> vf;      //Vértices Finais
         bool teste=false;
         string s;
 
@@ -125,8 +126,28 @@ int main()
                 }
                 break;
             case 'F':
-//                finais();
-                //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
+//                finais();         //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
+                for (int i=0; i<vet.size(); i++){                 //um for para gravar cada grau do vetor
+                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
+                    for(int j=0; j<vet.size(); j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
+                        if(m[i][j].peso>0)
+                            cont++;             //a cada aresta incidente num vértice incrementa o contador
+                    }
+                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
+                }
+
+                for (int i=0; i<graus.size(); i++)
+                    if (graus[i] == 1) vf.push_back(vet[i]);
+
+                if(!vf.empty()){
+                    cout << "\tVértices Finais: ";             //mostra os vértices finais
+                    for (int i=0; i<vf.size(); i++)
+                        cout << vf[i] << ' ';
+                    cout << endl << endl;
+                }
+                else
+                    cout << "\tEste grafo não possui vértices finais\n\n";
+
                 break;
             case 'I':
 //                incid();
@@ -213,3 +234,4 @@ int main()
         system("pause");
     }while(true);
 }
+
