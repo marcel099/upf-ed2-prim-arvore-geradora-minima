@@ -83,6 +83,8 @@ int main()
     char op;
     do{
         int num,cont=0;
+        int i, j, aux=rot_ver.size();
+        bool teste=false;
         string s;
         menu();
         cout << "\tSelecione uma opção: ";
@@ -113,19 +115,22 @@ int main()
                 break;
             case 'I':
 //                incid();
-                cout<<"Digite um rótulo: \n";
+                cout<<"Digite o rótulo de uma aresta: \n";
                 cin>>s;
-                num=buscaVertice(rot_ver, s);
-                if(num<0)
+
+                for(i=0; i<rot_ver.size(); i++, aux--){
+                    for(int j=0; j<aux; j++){
+                        if(s==rot_ar[i][j]){
+                            cout<<"Rótulos incidentes: "<<rot_ver[i]<<' '<<rot_ver[j]<<endl;
+                            teste=true;
+                            break;
+                        }
+                    }
+                    if(teste==true) break;
+                }
+                if(teste==false)
                 cout<<"Rótulo não existe.\n";
-            else{
-                cout<<"Rótulos incidentes: ";
-                for(int i=0;i<rot_ver.size();i++){
-                    if(peso[num][i]>0)
-                        cout<<rot_ver[i]<<' ';
-                }
-                }
-                cout<<"\n";
+
                 pause();
                 break;
             case 'C':
