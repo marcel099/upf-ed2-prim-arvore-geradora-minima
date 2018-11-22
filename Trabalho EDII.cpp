@@ -2,7 +2,7 @@
 #include <fstream>          //usar toupper
 #include <stdlib.h>         //aceitar exit
 #include <clocale>          //aceitar acentuação
-//#include <algorithm>        //usar fill                       //Como parou de aceitar fill dá pra esconder
+#include <algorithm>        //usava fill, mas agora usa stable_sort                  //Como parou de aceitar fill dá pra esconder
 #include <cctype>           //usar toupper
 #include <vector>
 using namespace std;
@@ -97,8 +97,10 @@ int main()
     char op;
     do{
         int num,cont=0, i, j, aux=vet.size();
+        vector<int> graus;
         bool teste=false;
         string s;
+
         menu();
         cout << "\tSelecione uma opção: ";
         cin >> op;
@@ -109,7 +111,7 @@ int main()
                 break;
             case 'G':
 //                grau();
-                cout<<"\n\tQual o vértice desejado?\n";
+                cout<<"\n\tQual o vértice desejado? ";
                 cin>>s;
                 num=buscaVertice(vet,s);
                 if(num<0)
@@ -119,36 +121,59 @@ int main()
                         if(m[num][i].peso>0)
                             cont++;
                     }
-                    cout<<"\n\tGrau de "<<vet[num]<<": "<<cont<<"\n";       //pq deixar tudo grudado? prejudica legibilidade
+                    cout<<"\n\tGrau de "<<vet[num]<<": "<<cont<<"\n\n";       //pq deixar tudo grudado? prejudica legibilidade
                 }
                 break;
-            case 'F':
-//                finais();
-                break;
-            case 'I':
-//                incid();
-                cout<<"\n\tDigite o rótulo de uma aresta: ";
-                cin>>s;
-
-                for(int i=0; i<vet.size(); i++, aux--){
-                    for(int j=0; j<aux; j++){
-                        if(s==m[i][j].rot){
-                            cout<<"\n\tRótulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
-                            teste=true;
-                            break;
-                        }
-                    }
-                    if(teste==true) break;
-                }
-                if(teste==false)
-                cout<<"\n\tRótulo não existe.\n\n";
-
-                break;
-            case 'C':
-//                circuito();
-                break;
+//            case 'F':
+////                finais();
+//                break;
+//            case 'I':
+////                incid();
+//                cout<<"\n\tDigite o rótulo de uma aresta: ";
+//                cin>>s;
+//
+//                for(int i=0; i<vet.size(); i++, aux--){
+//                    for(int j=0; j<aux; j++){
+//                        if(s==m[i][j].rot){
+//                            cout<<"\n\tRótulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
+//                            teste=true;
+//                            break;
+//                        }
+//                    }
+//                    if(teste==true) break;
+//                }
+//                if(teste==false)
+//                cout<<"\n\tRótulo não existe.\n\n";
+//
+//                break;
+//            case 'C':
+////                circuito();
+//                break;
             case 'S':
 //                SeqGraus();
+                for (int i=0; i<vet.size(); i++){                 //for pra gravar cada grau do vetor
+                    //s = vet[i];
+                    //cout << "S: " << s << endl;
+                    //num = buscaVertice(vet, s);                //está buscando o vértice de acordo com o rótulo dele no vector
+                    //cout << "\nNum: " << num << endl;
+                    cont = 0;
+                    //cout << "Tam do vetor: " << vet.size() << endl;
+                    for(int j=0; j<vet.size(); j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
+                        //cout << "J: " << j << endl;
+                        if(m[i][j].peso>0)//{
+                            cont++;
+                            //cout << "entrou\n";
+                        //}
+                    }
+                    //cout << "Saiu\n";
+                    graus.push_back(cont);
+                    //cout << "Passou\n";
+                }
+                stable_sort(graus.begin(), graus.end());
+                cout << "\n\tSequência de Graus: ";
+                for (int i=0; i<graus.size(); i++)
+                    cout << graus[i] << ' ';
+                cout << endl << endl;
                 break;
             case 'E':
                 exit(0);
