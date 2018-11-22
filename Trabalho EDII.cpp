@@ -86,11 +86,6 @@ grafo leitura(grafo g){
 }
 
 
-struct dados{
-    string rot;             //rótulo da aresta
-    int peso;               //peso da aresta
-};
-
 void agv(){}
 
 void grau(grafo g){
@@ -107,7 +102,20 @@ void grau(grafo g){
     }
 }
 
-void finais(){}
+void finais(grafo g){
+    vector<string> vf;
+    for (int i=0; i<g.tam; i++)
+        if (g.grau[i] == 1) vf.push_back(g.rotulo_vertices[i]);
+
+        if(!vf.empty()){
+            cout << "\tVértices Finais: ";             //mostra os vértices finais
+            for (int i=0; i<vf.size(); i++)
+                cout << vf[i] << ' ';
+            cout << "\n\n";
+        }
+        else
+            cout << "\tEste grafo não possui vértices finais\n\n";
+}
 
 void incid(grafo g){
     string s;
@@ -193,27 +201,8 @@ int main()
 
                 break;
             case 'F':
-//                finais();         //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
-                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
-                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
-                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-                        if(g.pesos[i][j]>0)
-                            cont++;             //a cada aresta incidente num vértice incrementa o contador
-                    }
-                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
-                }
+                finais(g);         //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
 
-                for (int i=0; i<graus.size(); i++)
-                    if (graus[i] == 1) vf.push_back(g.rotulo_vertices[i]);
-
-                if(!vf.empty()){
-                    cout << "\tVértices Finais: ";             //mostra os vértices finais
-                    for (int i=0; i<vf.size(); i++)
-                        cout << vf[i] << ' ';
-                    cout << endl << endl;
-                }
-                else
-                    cout << "\tEste grafo não possui vértices finais\n\n";
 
                 break;
             case 'I':
@@ -236,7 +225,7 @@ int main()
                 cout << "\n\tSequência de Graus: ";             //mostra o vetor
                 for (int i=0; i<graus.size(); i++)
                     cout << graus[i] << ' ';
-                cout << endl << endl;
+                cout << "\n\n";
 
                 break;
             case 'E':
