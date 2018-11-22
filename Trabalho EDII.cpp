@@ -113,6 +113,20 @@ int main()
                 break;
             case 'I':
 //                incid();
+                cout<<"Digite um rótulo: \n";
+                cin>>s;
+                num=buscaVertice(rot_ver, s);
+                if(num<0)
+                cout<<"Rótulo não existe.\n";
+            else{
+                cout<<"Rótulos incidentes: ";
+                for(int i=0;i<rot_ver.size();i++){
+                    if(peso[num][i]>0)
+                        cout<<rot_ver[i]<<' ';
+                }
+                }
+                cout<<"\n";
+                pause();
                 break;
             case 'C':
 //                circuito();
