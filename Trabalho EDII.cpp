@@ -124,56 +124,49 @@ int main()
                     cout<<"\n\tGrau de "<<vet[num]<<": "<<cont<<"\n\n";       //pq deixar tudo grudado? prejudica legibilidade
                 }
                 break;
-//            case 'F':
-////                finais();
-//                break;
-//            case 'I':
-////                incid();
-//                cout<<"\n\tDigite o rótulo de uma aresta: ";
-//                cin>>s;
-//
-//                for(int i=0; i<vet.size(); i++, aux--){
-//                    for(int j=0; j<aux; j++){
-//                        if(s==m[i][j].rot){
-//                            cout<<"\n\tRótulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
-//                            teste=true;
-//                            break;
-//                        }
-//                    }
-//                    if(teste==true) break;
-//                }
-//                if(teste==false)
-//                cout<<"\n\tRótulo não existe.\n\n";
-//
-//                break;
-//            case 'C':
-////                circuito();
-//                break;
+            case 'F':
+//                finais();
+                //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
+                break;
+            case 'I':
+//                incid();
+                cout<<"\n\tDigite o rótulo de uma aresta: ";
+                cin>>s;
+
+                for(int i=0; i<vet.size(); i++, aux--){
+                    for(int j=0; j<aux; j++){
+                        if(s==m[i][j].rot){
+                            cout<<"\n\tRótulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
+                            teste=true;
+                            break;
+                        }
+                    }
+                    if(teste==true) break;
+                }
+                if(teste==false)
+                cout<<"\n\tRótulo não existe.\n\n";
+
+                break;
+            case 'C':
+//                circuito();
+                break;
             case 'S':
 //                SeqGraus();
-                for (int i=0; i<vet.size(); i++){                 //for pra gravar cada grau do vetor
-                    //s = vet[i];
-                    //cout << "S: " << s << endl;
-                    //num = buscaVertice(vet, s);                //está buscando o vértice de acordo com o rótulo dele no vector
-                    //cout << "\nNum: " << num << endl;
-                    cont = 0;
-                    //cout << "Tam do vetor: " << vet.size() << endl;
+                for (int i=0; i<vet.size(); i++){                 //um for para gravar cada grau do vetor
+                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
                     for(int j=0; j<vet.size(); j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-                        //cout << "J: " << j << endl;
-                        if(m[i][j].peso>0)//{
-                            cont++;
-                            //cout << "entrou\n";
-                        //}
+                        if(m[i][j].peso>0)
+                            cont++;             //a cada aresta incidente num vértice incrementa o contador
                     }
-                    //cout << "Saiu\n";
-                    graus.push_back(cont);
-                    //cout << "Passou\n";
+                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
                 }
-                stable_sort(graus.begin(), graus.end());
-                cout << "\n\tSequência de Graus: ";
+                stable_sort(graus.begin(), graus.end());        //ordena este vetor em ordem crescente
+
+                cout << "\n\tSequência de Graus: ";             //mostra o vetor
                 for (int i=0; i<graus.size(); i++)
                     cout << graus[i] << ' ';
                 cout << endl << endl;
+
                 break;
             case 'E':
                 exit(0);
@@ -220,4 +213,3 @@ int main()
         system("pause");
     }while(true);
 }
-
