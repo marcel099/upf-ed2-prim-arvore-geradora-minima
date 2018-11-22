@@ -91,22 +91,19 @@ void agv(){}
 void grau(grafo g){
     string s;
     int num;
-    cout<<"\n\tQual o vértice desejado? ";
-    cin>>s;
-    num=buscaVertice(g.rotulo_vertices,s);
-    if(num<0)
-        cout<<"\n\tRótulo não existe.\n";
-    else{
-        cout<<"\n\tGrau de "<<g.rotulo_vertices[num]<<": "
-            <<g.grau[num]<<"\n\n";//pq deixar tudo grudado? prejudica legibilidade //entre neste link: https://i.kym-cdn.com/entries/icons/original/000/007/508/neildegrasse.jpg
-    }
+    cout << "\n\tQual o vértice desejado? ";
+    cin >> s;
+    num=buscaVertice(g.rotulo_vertices, s);
+
+    num<0 ? cout << "\tEste rótulo não existe.\n\n" : cout << "\tGrau de " << g.rotulo_vertices[num] << ": " << g.grau[num] << "\n\n";
 }
+//pq deixar tudo grudado? prejudica legibilidade //entre neste link: https://i.kym-cdn.com/entries/icons/original/000/007/508/neildegrasse.jpg
 
 void finais(grafo g){
     vector<string> vf;
     for (int i=0; i<g.tam; i++)
         if (g.grau[i] == 1) vf.push_back(g.rotulo_vertices[i]);
-
+        cout << vf.size() << endl;
         if(!vf.empty()){
             cout << "\tVértices Finais: ";             //mostra os vértices finais
             for (int i=0; i<vf.size(); i++)
