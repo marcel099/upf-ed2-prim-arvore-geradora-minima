@@ -101,10 +101,11 @@ void grau(grafo g){
 //pq deixar tudo grudado? prejudica legibilidade //entre neste link: https://i.kym-cdn.com/entries/icons/original/000/007/508/neildegrasse.jpg
 
 void finais(grafo g){
-    vector<string> vf;
+    vector<string> vf;              //vector que guarda o rótulo dos nodos com grau 1
     for (int i=0; i<g.tam; i++)
-        if (g.grau[i] == 1) vf.push_back(g.rotulo_vertices[i]);
-        cout << vf.size() << endl;
+        if (g.grau[i] == 1)                     //se o grau for 1 insere no vector
+            vf.push_back(g.rotulo_vertices[i]);
+
         if(!vf.empty()){
             cout << "\tVértices Finais: ";             //mostra os vértices finais
             for (int i=0; i<vf.size(); i++)
@@ -142,47 +143,55 @@ void SeqGraus(grafo g)
     cout << "\n\n";
 }
 
-void debug(grafo g){
-    cout << "\nVértices: ";                //só passando pra melhorar a legibilidade
-    for(int i=0;i<g.tam;i++)
-        cout << g.rotulo_vertices[i] << ' ';
+void debug(grafo g,char op){
+    switch(op){
+        case 'v':
+            cout << "Vértices: ";                //só passando pra melhorar a legibilidade
+            for(int i=0; i<g.tam; i++)
+                cout << g.rotulo_vertices[i] << ' ';
+            cout << endl;
+            break;
 
-    cout << "\n\nPesos:\n\t|\t";
-    for(int i=0;i<g.tam;i++)
-        cout << g.rotulo_vertices[i] << "\t|\t";
+        case 'p':
+            cout << "\nPesos\t|\t";
+            for(int i=0; i<g.tam; i++)
+            cout << g.rotulo_vertices[i] << "\t|\t";
+            cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-    cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+            for(int i=0; i<g.tam; i++){
+                cout << g.rotulo_vertices[i] << "\t|\t";
+                for(int j=0; j<g.tam; j++){
+                    if(g.pesos[i][j]==0)
+                        cout<<"";
+                    else
+                        cout << g.pesos[i][j];
+                    cout<< "\t|\t";
+                }
+            cout << endl;
+            }
+            break;
 
-    for(int i=0;i<g.tam;i++){
-        cout << g.rotulo_vertices[i] << "\t|\t";
-        for(int j=0;j<g.tam;j++){
-            cout << g.pesos[i][j] << "\t|\t";
-        }
-        cout << endl;
+        case 'a':
+            cout << "\nArestas\t|\t";
+            for(int i=0; i<g.tam; i++)
+                cout << g.rotulo_vertices[i] << "\t|\t";
+            cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+            for(int i=0; i<g.tam; i++){
+                cout << g.rotulo_vertices[i] << "\t|\t";
+                for(int j=0; j<g.tam; j++){
+                    cout << g.rotulo_arestas[i][j] << "\t|\t";
+                }
+                cout << endl;
+            }
+            break;
     }
-
-    cout << "\nArestas:\n\t|\t";
-
-    for(int i=0;i<g.tam;i++)
-        cout << g.rotulo_vertices[i] << "\t|\t";
-
-    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-
-    for(int i=0;i<g.tam;i++){
-        cout << g.rotulo_vertices[i] << "\t|\t";
-        for(int j=0;j<g.tam;j++){
-            cout << g.rotulo_arestas[i][j] << "\t|\t";
-        }
-        cout << endl;
-    }
-    cout << endl;
 }
 
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
     grafo g;
-    g=leitura(g);
+    g = leitura(g);
 
     char op;
     do{
@@ -214,23 +223,28 @@ int main()
                 break;
             case 'S':
                 SeqGraus(g);
-//                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
-//                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
-//                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-//                        if(g.pesos[i][j]>0)
-//                            cont++;             //a cada aresta incidente num vértice incrementa o contador
-//                    }
-//                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
-//                }
                 break;
             case 'E':
                 exit(0);
-            case 'D':       //opção escondida de debug
-                debug(g);
-                break;
+           case 'D':       //opção escondida de debug
+                cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
+                while (cout << "\n\tDeseja ver: " && cin >> num && num!=1 && num!=2 && num!=3)
+                    cout << "\tInválido\n";
+                switch(num){
+                    case 0:
+                        debug(g,'v');
+                        break;
+                    case 1:
+                        debug(g,'p');
+                        break;
+                    case 2:
+                        debug(g,'a');
+                        break;
+                }
+                debug(g,'h');
+            break;
             default:
                 cout << "\n\tEscolha uma opção válida: \n\n\t";
-
         }
         system("pause");
     }while(true);
