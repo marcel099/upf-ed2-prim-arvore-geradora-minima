@@ -134,44 +134,49 @@ void incid(grafo g){
 
 void circuito(){}
 
-void SeqGraus(){}
+void SeqGraus(grafo g)
+{
+    stable_sort(g.grau.begin(), g.grau.end());        //ordena este vetor em ordem crescente
 
-//void pause(){                         //isso é desnecessauro
-//    system("pause");
-//}
+    cout << "\n\tSequência de Graus: ";             //mostra o vetor
+    for (int i=0; i<g.grau.size(); i++)
+        cout << g.grau[i] << ' ';
+    cout << "\n\n";
+}
+
 void debug(grafo g){
-cout<<"Vértices:\n";
-                for(int i=0;i<g.tam;i++){
-                    cout<<g.rotulo_vertices[i]<<' ';
-                }
-                cout<<"\nPesos:\n\n\t|\t";
-                for(int i=0;i<g.tam;i++){
-                    cout<<g.rotulo_vertices[i]<<"\t|\t";
-                }
-                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+    cout << "Vértices:\n";                //só passando pra melhorar a legibilidade
+    for(int i=0;i<g.tam;i++)
+        cout << g.rotulo_vertices[i] << ' ';
 
-                for(int i=0;i<g.tam;i++){
-                    cout<<g.rotulo_vertices[i]<<"\t|\t";
-                    for(int j=0;j<g.tam;j++){
-                        cout<<g.pesos[i][j]<<"\t|\t";
-                    }
-                    cout<<endl;
-                }
+    cout << "\nPesos:\n\n\t|\t";
+    for(int i=0;i<g.tam;i++)
+        cout << g.rotulo_vertices[i] << "\t|\t";
 
-                cout<<"\nArestas:\n\n\t|\t";
+    cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-                    for(int i=0;i<g.tam;i++){
-                    cout<<g.rotulo_vertices[i]<<"\t|\t";
-                }
-                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+    for(int i=0;i<g.tam;i++){
+        cout << g.rotulo_vertices[i] << "\t|\t";
+        for(int j=0;j<g.tam;j++){
+            cout << g.pesos[i][j] << "\t|\t";
+        }
+        cout << endl;
+    }
 
-                for(int i=0;i<g.tam;i++){
-                    cout<<g.rotulo_vertices[i]<<"\t|\t";
-                    for(int j=0;j<g.tam;j++){
-                        cout<<g.rotulo_arestas[i][j]<<"\t|\t";
-                    }
-                    cout<<endl;
-                }
+    cout << "\nArestas:\n\n\t|\t";
+
+    for(int i=0;i<g.tam;i++)
+        cout << g.rotulo_vertices[i] << "\t|\t";
+
+    cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+    for(int i=0;i<g.tam;i++){
+        cout << g.rotulo_vertices[i] << "\t|\t";
+        for(int j=0;j<g.tam;j++){
+            cout << g.rotulo_arestas[i][j] << "\t|\t";
+        }
+        cout << endl;
+    }
 }
 
 int main()
@@ -198,44 +203,34 @@ int main()
                 break;
             case 'G':
                 grau(g);
-
                 break;
             case 'F':
                 finais(g);         //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
-
-
                 break;
             case 'I':
                 incid(g);
+                break;
             case 'C':
 //                circuito();
                 break;
             case 'S':
-//                SeqGraus();
-                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
-                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
-                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-                        if(g.pesos[i][j]>0)
-                            cont++;             //a cada aresta incidente num vértice incrementa o contador
-                    }
-                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
-                }
-                stable_sort(graus.begin(), graus.end());        //ordena este vetor em ordem crescente
-
-                cout << "\n\tSequência de Graus: ";             //mostra o vetor
-                for (int i=0; i<graus.size(); i++)
-                    cout << graus[i] << ' ';
-                cout << "\n\n";
-
+                SeqGraus(g);
+//                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
+//                    cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
+//                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
+//                        if(g.pesos[i][j]>0)
+//                            cont++;             //a cada aresta incidente num vértice incrementa o contador
+//                    }
+//                    graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
+//                }
                 break;
             case 'E':
                 exit(0);
-                //break;                            //esse break é desnecessário pois o programa já encerra dentro deste case
-            case 'D': //opção escondida de debug
+            case 'D':       //opção escondida de debug
                 debug(g);
                 break;
             default:
-                cout << "\n\tEscolha uma opção válida: \n\n\t";     //é o último "case", então não precisa de break
+                cout << "\n\tEscolha uma opção válida: \n\n\t";
 
         }
         system("pause");
