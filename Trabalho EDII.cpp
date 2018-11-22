@@ -109,7 +109,20 @@ void grau(grafo g){
 
 void finais(){}
 
-void incid(){}
+void incid(grafo g){
+    string s;
+    cout<<"\n\tDigite o rótulo de uma aresta: ";
+    cin>>s;
+
+    for(int i=0; i<g.tam; i++){
+        for(int j=0; j<g.tam; j++)
+            if(s==g.rotulo_arestas[i][j]){
+                cout<<"\n\tRótulos incidentes: "<<g.rotulo_vertices[i]<<' '<<g.rotulo_vertices[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
+                return;
+            }
+    }
+    cout<<"\n\tRótulo não existe.\n\n";
+}
 
 void circuito(){}
 
@@ -204,24 +217,7 @@ int main()
 
                 break;
             case 'I':
-//                incid();
-                cout<<"\n\tDigite o rótulo de uma aresta: ";
-                cin>>s;
-
-                for(int i=0; i<g.tam; i++, aux--){
-                    for(int j=0; j<aux; j++){
-                        if(s==g.rotulo_arestas[i][j]){
-                            cout<<"\n\tRótulos incidentes: "<<g.rotulo_vertices[i]<<' '<<g.rotulo_vertices[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
-                            teste=true;
-                            break;
-                        }
-                    }
-                    if(teste==true) break;
-                }
-                if(teste==false)
-                cout<<"\n\tRótulo não existe.\n\n";
-
-                break;
+                incid(g);
             case 'C':
 //                circuito();
                 break;
