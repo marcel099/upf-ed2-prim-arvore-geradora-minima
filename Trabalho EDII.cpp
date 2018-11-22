@@ -37,47 +37,48 @@ int buscaVertice(vector<string> v,string s){
 grafo leitura(grafo g){
     ifstream arq;
     arq.open("xispa.txt");
-    int tamanho,cont;
-    string vertice,aresta;
+    int tamanho, cont;
+    string vertice, aresta;
 
     if (!arq){
         cout << "Não foi possível abrir o arquivo\n";
         exit(1);
     }
-    arq>>tamanho;
-    g.tam=tamanho;
-    for(int i=0;i<g.tam;i++){
-        arq>>vertice;
+
+    arq >> tamanho;
+    g.tam = tamanho;
+    for(int i=0; i<g.tam; i++){
+        arq >> vertice;
         g.rotulo_vertices.push_back(vertice);
     }
     //criação da matrizes: pesos e rotulo_arestas
     g.pesos = new int*[g.tam];
-    g.rotulo_arestas=new string*[g.tam];
-    for (int i=0;i<g.tam;i++){
+    g.rotulo_arestas = new string*[g.tam];
+    for (int i=0; i<g.tam; i++){
         g.pesos[i] = new int[g.tam];
-        g.rotulo_arestas[i]=new string[g.tam];
-        for (int j=0;j<g.tam;j++)
+        g.rotulo_arestas[i] = new string[g.tam];
+        for (int j=0; j<g.tam; j++)
             g.pesos[i][j] = 0;
     }
     int m[2];
-    arq>>tamanho;
-    for(int i=0;i<tamanho;i++){
-        arq>>aresta;          //leitura do rotulo da aresta
-        for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
-            arq>>vertice;
-            m[j] = buscaVertice(g.rotulo_vertices,vertice);
+    arq >> tamanho;
+    for(int i=0; i<tamanho; i++){
+        arq >> aresta;          //leitura do rotulo da aresta
+        for(int j=0; j<2; j++){            //leitura dos 2 indices a serem armazenados na matriz
+            arq >> vertice;
+            m[j] = buscaVertice(g.rotulo_vertices, vertice);
         }
-        arq>>g.pesos[m[0]][m[1]];            //armazenando o peso na matriz
-        g.pesos[m[1]][m[0]]=g.pesos[m[0]][m[1]];//leia a linha acima
+        arq >> g.pesos[m[0]][m[1]];            //armazenando o peso na matriz
+        g.pesos[m[1]][m[0]] = g.pesos[m[0]][m[1]];//leia a linha acima
 
-        g.rotulo_arestas[m[0]][m[1]]=aresta; //mesma coisa que o peso mas o rótulo da aresta
-        g.rotulo_arestas[m[1]][m[0]]=aresta; //leia linha acima
+        g.rotulo_arestas[m[0]][m[1]] = aresta; //mesma coisa que o peso mas o rótulo da aresta
+        g.rotulo_arestas[m[1]][m[0]] = aresta; //leia linha acima
     }
 
-    for(int i=0;i<g.tam;i++){
+    for(int i=0; i<g.tam; i++){
         cont=0;
-        for(int j=0;j<g.tam;j++)
-            if(g.pesos[i][j]>0)
+        for(int j=0; j<g.tam; j++)
+            if(g.pesos[i][j] > 0)
                 cont++;
         g.grau.push_back(cont);
     }
@@ -116,17 +117,17 @@ void finais(grafo g){
 
 void incid(grafo g){
     string s;
-    cout<<"\n\tDigite o rótulo de uma aresta: ";
-    cin>>s;
+    cout << "\n\tDigite o rótulo de uma aresta: ";
+    cin >> s;
 
     for(int i=0; i<g.tam; i++){
         for(int j=0; j<g.tam; j++)
-            if(s==g.rotulo_arestas[i][j]){
-                cout<<"\n\tRótulos incidentes: "<<g.rotulo_vertices[i]<<' '<<g.rotulo_vertices[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
+            if(s == g.rotulo_arestas[i][j]){
+                cout << "\n\tRótulos incidentes: " << g.rotulo_vertices[i] << ' ' << g.rotulo_vertices[j] << "\n\n";        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
                 return;
             }
     }
-    cout<<"\n\tRótulo não existe.\n\n";
+    cout << "\n\tRótulo não existe.\n\n";
 }
 
 void circuito(){}
