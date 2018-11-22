@@ -1,20 +1,20 @@
 #include <iostream>
 #include <fstream>          //usar toupper
 #include <stdlib.h>         //aceitar exit
-#include <clocale>          //aceitar acentuaÁ„o
-#include <algorithm>        //usar fill
+#include <clocale>          //aceitar acentua√ß√£o
+//#include <algorithm>        //usar fill                       //Como parou de aceitar fill d√° pra esconder
 #include <cctype>           //usar toupper
 #include <vector>
 using namespace std;
 void menu(){
     system("cls");
     cout << "\n----------------MENU----------------\n\n"
-         << "\tA - ¡rvore Geradora MÌnima\n"
+         << "\tA - √Årvore Geradora M√≠nima\n"
          << "\tG - Grau\n"
-         << "\tF - VÈrtices Finais\n"
-         << "\tI - IncidÍncia\n"
+         << "\tF - V√©rtices Finais\n"
+         << "\tI - Incid√™ncia\n"
          << "\tC - Circuito\n"
-         << "\tS - SequÍncia de Graus\n"
+         << "\tS - Sequ√™ncia de Graus\n"
          << "\tE - Encerrar Programa\n"
          << "\n----------------------------------------\n\n";
 }
@@ -25,6 +25,11 @@ int buscaVertice(vector<string> v,string s){
             return i;
     return -1;
 }
+
+struct dados{
+    string rot;             //r√≥tulo da aresta
+    int peso;               //peso da aresta
+};
 
 void agv(){}
 
@@ -38,55 +43,64 @@ void circuito(){}
 
 void SeqGraus(){}
 
-void pause(){
-    system("pause");
-}
+//void pause(){                         //isso √© desnecessauro
+//    system("pause");
+//}
 
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
+
     ifstream arq;
     arq.open("xispa.txt");
     if (!arq){
-        cout << "N„o foi possÌvel abrir o arquivo\n";
+        cout << "N√£o foi poss√≠vel abrir o arquivo\n";
         exit(1);
     }
-    int q,q1;
-    arq >> q;                       //leitura da quantia de vÈrtices
-    vector<string> rot_ver;         //vetor com o rÛtulo dos vertices
-    string rot_ar[q][q];            //matriz com o rÛtulo das arestas
-    int peso[q][q];                 //matriz com o peso das arestas
 
-    fill(peso[0], peso[q]+q, 0);    //preenche matriz peso com valor 0 em todos
+    int QtdVert, QtdArest;                                                                  //futuras duas √∫nicas vari√°veis globais, mas √© complicado criar vari√°vel global n√£o iniciaizada
+    arq >> QtdVert;                       //leitura da quantia de v√©rtices
+    vector<string> vet;         //vetor com o r√≥tulo dos vertices                               //D√öVIDA: pq usar vector sendo q d√° pra usar um simples vetor?
+    dados m[QtdVert][QtdVert];          //matriz com os pesos e r√≥tulos das arestas
+
+    for (int i=0; i<QtdVert; i++){            //preenche matriz peso com valor 0 em todos
+        for (int j=0; j<QtdVert; j++)
+            m[i][j].peso = 0;
+    }
+
+   // fill(m[0][0].peso, m[QtdVert][QtdVert].peso, 0);  //n√£o fa√ßo ideia de como aceitava antes, mas a fun√ß√£o fill a princ√≠pio √© s√≥ para vetor e parou de funcionar ao usar matriz de struct
+
 
     string rotulo;
-    for (int i=0; i<q; i++){         //leitura do rÛtulo dos vÈrtices
+    for (int i=0; i<QtdVert; i++){         //leitura do r√≥tulo dos v√©rtices
         arq>>rotulo;
-        rot_ver.push_back(rotulo);
+        vet.push_back(rotulo);
     }
-    arq >> q1;                      //leitura da quantia de arestas
-    string rotulo_aresta,rotulo_vertice;
-    int x,m[2];
-    for(int i=0;i<q1;i++){
-        arq>>rotulo_aresta;          //leitura do rotulo da aresta
-    for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
-        arq>>rotulo_vertice;
-        m[j] = buscaVertice(rot_ver,rotulo_vertice);
-    }
-    arq>>peso[m[0]][m[1]];            //armazenando o peso na matriz
-    peso[m[1]][m[0]]=peso[m[0]][m[1]];//leia a linha acima
 
-    rot_ar[m[0]][m[1]]=rotulo_aresta; //mesma coisa que o peso mas o rÛtulo da aresta
-    rot_ar[m[1]][m[0]]=rotulo_aresta; //leia linha acima
+    arq >> QtdArest;                      //leitura da quantia de arestas
+    string rotulo_aresta, rotulo_vertice;
+    int vert[2];                             //vert: n√∫emro dos v√©rtices incidentes da aresta na matriz
+    for(int i=0; i<QtdArest; i++){
+        arq >> rotulo_aresta;          //leitura do rotulo da aresta
+
+        for(int j=0; j<2; j++){            //leitura dos 2 indices a serem armazenados na matriz
+            arq >> rotulo_vertice;
+            vert[j] = buscaVertice(vet, rotulo_vertice);
+        }
+        arq >> m[vert[0]][vert[1]].peso;                             //armazenando o peso da aresta na matriz
+        m[vert[1]][vert[0]].peso = m[vert[0]][vert[1]].peso;         //leia a linha acima                   //D√öVIDA: oq essa linha realmente faz?
+
+        m[vert[0]][vert[1]].rot = rotulo_aresta;            //mesma coisa que o peso mas o r√≥tulo da aresta
+        m[vert[1]][vert[0]].rot = rotulo_aresta;            //leia linha acima
     }
 
     char op;
     do{
-        int num,cont=0,aux=rot_ver.size();
+        int num,cont=0, i, j, aux=vet.size();
         bool teste=false;
         string s;
         menu();
-        cout << "\tSelecione uma opÁ„o: ";
+        cout << "\tSelecione uma op√ß√£o: ";
         cin >> op;
         op=toupper(op);
         switch(op){
@@ -95,32 +109,31 @@ int main()
                 break;
             case 'G':
 //                grau();
-            cout<<"Qual o vÈrtice desejado?\n";
-            cin>>s;
-            num=buscaVertice(rot_ver,s);
-            if(num<0)
-                cout<<"RÛtulo n„o existe.\n";
-            else{
-                for(int i=0;i<rot_ver.size();i++){
-                    if(peso[num][i]>0)
-                        cont++;
+                cout<<"\n\tQual o v√©rtice desejado?\n";
+                cin>>s;
+                num=buscaVertice(vet,s);
+                if(num<0)
+                    cout<<"\n\tR√≥tulo n√£o existe.\n";
+                else{
+                    for(int i=0;i<vet.size();i++){
+                        if(m[num][i].peso>0)
+                            cont++;
+                    }
+                    cout<<"\n\tGrau de "<<vet[num]<<": "<<cont<<"\n";       //pq deixar tudo grudado? prejudica legibilidade
                 }
-                cout<<"Grau de "<<rot_ver[num]<<": "<<cont<<"\n";
-            }
-            pause();
-            break;
+                break;
             case 'F':
 //                finais();
                 break;
             case 'I':
 //                incid();
-                cout<<"Digite o rÛtulo de uma aresta: \n";
+                cout<<"\n\tDigite o r√≥tulo de uma aresta: ";
                 cin>>s;
 
-                for(int i=0; i<rot_ver.size(); i++, aux--){
+                for(int i=0; i<vet.size(); i++, aux--){
                     for(int j=0; j<aux; j++){
-                        if(s==rot_ar[i][j]){
-                            cout<<"RÛtulos incidentes: "<<rot_ver[i]<<' '<<rot_ver[j]<<endl;
+                        if(s==m[i][j].rot){
+                            cout<<"\n\tR√≥tulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //N√£o sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
                             teste=true;
                             break;
                         }
@@ -128,9 +141,8 @@ int main()
                     if(teste==true) break;
                 }
                 if(teste==false)
-                cout<<"RÛtulo n„o existe.\n";
+                cout<<"\n\tR√≥tulo n√£o existe.\n\n";
 
-                pause();
                 break;
             case 'C':
 //                circuito();
@@ -140,47 +152,47 @@ int main()
                 break;
             case 'E':
                 exit(0);
-            break;
-            case 'D': //opÁ„o escondida de debug
-                cout<<"VÈrtices:\n";
-                for(int i=0;i<rot_ver.size();i++){
-                    cout<<rot_ver[i]<<' ';
+                //break;                            //esse break √© desnecess√°rio pois o programa j√° encerra dentro deste case
+            case 'D': //op√ß√£o escondida de debug
+                cout<<"V√©rtices:\n";
+                for(int i=0;i<vet.size();i++){
+                    cout<<vet[i]<<' ';
                 }
                 cout<<"\nPesos:\n\n\t|\t";
-                for(int i=0;i<rot_ver.size();i++){
-                    cout<<rot_ver[i]<<"\t|\t";
+                for(int i=0;i<vet.size();i++){
+                    cout<<vet[i]<<"\t|\t";
                 }
                 cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-                for(int i=0;i<rot_ver.size();i++){
-                    cout<<rot_ver[i]<<"\t|\t";
-                    for(int j=0;j<q;j++){
-                        cout<<peso[i][j]<<"\t|\t";
+                for(int i=0;i<vet.size();i++){
+                    cout<<vet[i]<<"\t|\t";
+                    for(int j=0;j<QtdVert;j++){
+                        cout<<m[i][j].peso<<"\t|\t";
                     }
                     cout<<endl;
                 }
 
                 cout<<"\nArestas:\n\n\t|\t";
 
-                    for(int i=0;i<rot_ver.size();i++){
-                    cout<<rot_ver[i]<<"\t|\t";
+                    for(int i=0;i<vet.size();i++){
+                    cout<<vet[i]<<"\t|\t";
                 }
                 cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-                for(int i=0;i<rot_ver.size();i++){
-                    cout<<rot_ver[i]<<"\t|\t";
-                    for(int j=0;j<q;j++){
-                        cout<<rot_ar[i][j]<<"\t|\t";
+                for(int i=0;i<vet.size();i++){
+                    cout<<vet[i]<<"\t|\t";
+                    for(int j=0;j<QtdVert;j++){
+                        cout<<m[i][j].rot<<"\t|\t";
                     }
                     cout<<endl;
                 }
-                pause();
-                break;
 
-            default:
-                cout << "\n\tEscolha uma opÁ„o v·lida: \n\n\t";
                 break;
+            default:
+                cout << "\n\tEscolha uma op√ß√£o v√°lida: \n\n\t";     //√© o √∫ltimo "case", ent√£o n√£o precisa de break
+
         }
+        system("pause");
     }while(true);
 }
 
