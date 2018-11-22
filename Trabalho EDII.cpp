@@ -143,11 +143,11 @@ void SeqGraus(grafo g)
 }
 
 void debug(grafo g){
-    cout << "Vértices:\n";                //só passando pra melhorar a legibilidade
+    cout << "\nVértices: ";                //só passando pra melhorar a legibilidade
     for(int i=0;i<g.tam;i++)
         cout << g.rotulo_vertices[i] << ' ';
 
-    cout << "\nPesos:\n\n\t|\t";
+    cout << "\n\nPesos:\n\t|\t";
     for(int i=0;i<g.tam;i++)
         cout << g.rotulo_vertices[i] << "\t|\t";
 
@@ -161,7 +161,7 @@ void debug(grafo g){
         cout << endl;
     }
 
-    cout << "\nArestas:\n\n\t|\t";
+    cout << "\nArestas:\n\t|\t";
 
     for(int i=0;i<g.tam;i++)
         cout << g.rotulo_vertices[i] << "\t|\t";
@@ -175,6 +175,7 @@ void debug(grafo g){
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 int main()
