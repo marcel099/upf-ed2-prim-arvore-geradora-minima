@@ -82,8 +82,7 @@ int main()
 
     char op;
     do{
-        int num,cont=0;
-        int i, j, aux=rot_ver.size();
+        int num,cont=0,aux=rot_ver.size();
         bool teste=false;
         string s;
         menu();
@@ -118,7 +117,7 @@ int main()
                 cout<<"Digite o rótulo de uma aresta: \n";
                 cin>>s;
 
-                for(i=0; i<rot_ver.size(); i++, aux--){
+                for(int i=0; i<rot_ver.size(); i++, aux--){
                     for(int j=0; j<aux; j++){
                         if(s==rot_ar[i][j]){
                             cout<<"Rótulos incidentes: "<<rot_ver[i]<<' '<<rot_ver[j]<<endl;
