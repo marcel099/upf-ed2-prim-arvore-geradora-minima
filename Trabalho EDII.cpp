@@ -19,12 +19,72 @@ void menu(){
          << "\n----------------------------------------\n\n";
 }
 
+struct grafo{
+    vector<string> rotulo_vertices;
+    int **pesos;
+    string **rotulo_arestas;
+    int tam;
+    vector<int> grau;
+};
+
 int buscaVertice(vector<string> v,string s){
     for(int i=0;i<v.size();i++)
         if(v[i]==s)
             return i;
     return -1;
 }
+
+grafo leitura(grafo g){
+    ifstream arq;
+    arq.open("xispa.txt");
+    int tamanho,cont;
+    string vertice,aresta;
+
+    if (!arq){
+        cout << "Não foi possível abrir o arquivo\n";
+        exit(1);
+    }
+    arq>>tamanho;
+    g.tam=tamanho;
+    for(int i=0;i<g.tam;i++){
+        arq>>vertice;
+        g.rotulo_vertices.push_back(vertice);
+    }
+    //criação da matrizes: pesos e rotulo_arestas
+    g.pesos = new int*[g.tam];
+    g.rotulo_arestas=new string*[g.tam];
+    for (int i=0;i<g.tam;i++){
+        g.pesos[i] = new int[g.tam];
+        g.rotulo_arestas[i]=new string[g.tam];
+        for (int j=0;j<g.tam;j++)
+            g.pesos[i][j] = 0;
+    }
+    int m[2];
+    arq>>tamanho;
+    for(int i=0;i<tamanho;i++){
+        arq>>aresta;          //leitura do rotulo da aresta
+        for(int j=0;j<2;j++){            //leitura dos 2 indices a serem armazenados na matriz
+            arq>>vertice;
+            m[j] = buscaVertice(g.rotulo_vertices,vertice);
+        }
+        arq>>g.pesos[m[0]][m[1]];            //armazenando o peso na matriz
+        g.pesos[m[1]][m[0]]=g.pesos[m[0]][m[1]];//leia a linha acima
+
+        g.rotulo_arestas[m[0]][m[1]]=aresta; //mesma coisa que o peso mas o rótulo da aresta
+        g.rotulo_arestas[m[1]][m[0]]=aresta; //leia linha acima
+    }
+
+    for(int i=0;i<g.tam;i++){
+        cont=0;
+        for(int j=0;j<g.tam;j++)
+            if(g.pesos[i][j]>0)
+                cont++;
+        g.grau.push_back(cont);
+    }
+
+    return g;
+}
+
 
 struct dados{
     string rot;             //rótulo da aresta
@@ -33,7 +93,19 @@ struct dados{
 
 void agv(){}
 
-void grau(){}
+void grau(grafo g){
+    string s;
+    int num;
+    cout<<"\n\tQual o vértice desejado? ";
+    cin>>s;
+    num=buscaVertice(g.rotulo_vertices,s);
+    if(num<0)
+        cout<<"\n\tRótulo não existe.\n";
+    else{
+        cout<<"\n\tGrau de "<<g.rotulo_vertices[num]<<": "
+            <<g.grau[num]<<"\n\n";//pq deixar tudo grudado? prejudica legibilidade //entre neste link: https://i.kym-cdn.com/entries/icons/original/000/007/508/neildegrasse.jpg
+    }
+}
 
 void finais(){}
 
@@ -46,57 +118,50 @@ void SeqGraus(){}
 //void pause(){                         //isso é desnecessauro
 //    system("pause");
 //}
+void debug(grafo g){
+cout<<"Vértices:\n";
+                for(int i=0;i<g.tam;i++){
+                    cout<<g.rotulo_vertices[i]<<' ';
+                }
+                cout<<"\nPesos:\n\n\t|\t";
+                for(int i=0;i<g.tam;i++){
+                    cout<<g.rotulo_vertices[i]<<"\t|\t";
+                }
+                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+                for(int i=0;i<g.tam;i++){
+                    cout<<g.rotulo_vertices[i]<<"\t|\t";
+                    for(int j=0;j<g.tam;j++){
+                        cout<<g.pesos[i][j]<<"\t|\t";
+                    }
+                    cout<<endl;
+                }
+
+                cout<<"\nArestas:\n\n\t|\t";
+
+                    for(int i=0;i<g.tam;i++){
+                    cout<<g.rotulo_vertices[i]<<"\t|\t";
+                }
+                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
+
+                for(int i=0;i<g.tam;i++){
+                    cout<<g.rotulo_vertices[i]<<"\t|\t";
+                    for(int j=0;j<g.tam;j++){
+                        cout<<g.rotulo_arestas[i][j]<<"\t|\t";
+                    }
+                    cout<<endl;
+                }
+}
 
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
-
-    ifstream arq;
-    arq.open("xispa.txt");
-    if (!arq){
-        cout << "Não foi possível abrir o arquivo\n";
-        exit(1);
-    }
-
-    int QtdVert, QtdArest;                                                                  //futuras duas únicas variáveis globais, mas é complicado criar variável global não iniciaizada
-    arq >> QtdVert;                       //leitura da quantia de vértices
-    vector<string> vet;         //vetor com o rótulo dos vertices                               //DÚVIDA: pq usar vector sendo q dá pra usar um simples vetor?
-    dados m[QtdVert][QtdVert];          //matriz com os pesos e rótulos das arestas
-
-    for (int i=0; i<QtdVert; i++){            //preenche matriz peso com valor 0 em todos
-        for (int j=0; j<QtdVert; j++)
-            m[i][j].peso = 0;
-    }
-
-   // fill(m[0][0].peso, m[QtdVert][QtdVert].peso, 0);  //não faço ideia de como aceitava antes, mas a função fill a princípio é só para vetor e parou de funcionar ao usar matriz de struct
-
-
-    string rotulo;
-    for (int i=0; i<QtdVert; i++){         //leitura do rótulo dos vértices
-        arq>>rotulo;
-        vet.push_back(rotulo);
-    }
-
-    arq >> QtdArest;                      //leitura da quantia de arestas
-    string rotulo_aresta, rotulo_vertice;
-    int vert[2];                             //vert: núemro dos vértices incidentes da aresta na matriz
-    for(int i=0; i<QtdArest; i++){
-        arq >> rotulo_aresta;          //leitura do rotulo da aresta
-
-        for(int j=0; j<2; j++){            //leitura dos 2 indices a serem armazenados na matriz
-            arq >> rotulo_vertice;
-            vert[j] = buscaVertice(vet, rotulo_vertice);
-        }
-        arq >> m[vert[0]][vert[1]].peso;                             //armazenando o peso da aresta na matriz
-        m[vert[1]][vert[0]].peso = m[vert[0]][vert[1]].peso;         //leia a linha acima                   //DÚVIDA: oq essa linha realmente faz?
-
-        m[vert[0]][vert[1]].rot = rotulo_aresta;            //mesma coisa que o peso mas o rótulo da aresta
-        m[vert[1]][vert[0]].rot = rotulo_aresta;            //leia linha acima
-    }
+    grafo g;
+    g=leitura(g);
 
     char op;
     do{
-        int num,cont=0, i, j, aux=vet.size();
+        int num,cont=0, i, j, aux=g.tam;
         vector<int> graus;
         vector<string> vf;      //Vértices Finais
         bool teste=false;
@@ -111,33 +176,22 @@ int main()
 //                agf();
                 break;
             case 'G':
-//                grau();
-                cout<<"\n\tQual o vértice desejado? ";
-                cin>>s;
-                num=buscaVertice(vet,s);
-                if(num<0)
-                    cout<<"\n\tRótulo não existe.\n";
-                else{
-                    for(int i=0;i<vet.size();i++){
-                        if(m[num][i].peso>0)
-                            cont++;
-                    }
-                    cout<<"\n\tGrau de "<<vet[num]<<": "<<cont<<"\n\n";       //pq deixar tudo grudado? prejudica legibilidade
-                }
+                grau(g);
+
                 break;
             case 'F':
 //                finais();         //depois chamará apenas chamará a função de graus para evitar reptição de código já que apenas precisa saber quais são os vetores de grau 1
-                for (int i=0; i<vet.size(); i++){                 //um for para gravar cada grau do vetor
+                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
                     cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
-                    for(int j=0; j<vet.size(); j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-                        if(m[i][j].peso>0)
+                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
+                        if(g.pesos[i][j]>0)
                             cont++;             //a cada aresta incidente num vértice incrementa o contador
                     }
                     graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
                 }
 
                 for (int i=0; i<graus.size(); i++)
-                    if (graus[i] == 1) vf.push_back(vet[i]);
+                    if (graus[i] == 1) vf.push_back(g.rotulo_vertices[i]);
 
                 if(!vf.empty()){
                     cout << "\tVértices Finais: ";             //mostra os vértices finais
@@ -154,10 +208,10 @@ int main()
                 cout<<"\n\tDigite o rótulo de uma aresta: ";
                 cin>>s;
 
-                for(int i=0; i<vet.size(); i++, aux--){
+                for(int i=0; i<g.tam; i++, aux--){
                     for(int j=0; j<aux; j++){
-                        if(s==m[i][j].rot){
-                            cout<<"\n\tRótulos incidentes: "<<vet[i]<<' '<<vet[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
+                        if(s==g.rotulo_arestas[i][j]){
+                            cout<<"\n\tRótulos incidentes: "<<g.rotulo_vertices[i]<<' '<<g.rotulo_vertices[j]<<endl << endl;        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
                             teste=true;
                             break;
                         }
@@ -173,10 +227,10 @@ int main()
                 break;
             case 'S':
 //                SeqGraus();
-                for (int i=0; i<vet.size(); i++){                 //um for para gravar cada grau do vetor
+                for (int i=0; i<g.tam; i++){                 //um for para gravar cada grau do vetor
                     cont = 0;           //zera o contador após ter terminado de descobrir o grau de um vértice
-                    for(int j=0; j<vet.size(); j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
-                        if(m[i][j].peso>0)
+                    for(int j=0; j<g.tam; j++){             //passando pra comparar em cada vértice se possui aresta incidente em outro vértice
+                        if(g.pesos[i][j]>0)
                             cont++;             //a cada aresta incidente num vértice incrementa o contador
                     }
                     graus.push_back(cont);                      //insere o grau de cada vértice em um vetor
@@ -193,39 +247,7 @@ int main()
                 exit(0);
                 //break;                            //esse break é desnecessário pois o programa já encerra dentro deste case
             case 'D': //opção escondida de debug
-                cout<<"Vértices:\n";
-                for(int i=0;i<vet.size();i++){
-                    cout<<vet[i]<<' ';
-                }
-                cout<<"\nPesos:\n\n\t|\t";
-                for(int i=0;i<vet.size();i++){
-                    cout<<vet[i]<<"\t|\t";
-                }
-                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-
-                for(int i=0;i<vet.size();i++){
-                    cout<<vet[i]<<"\t|\t";
-                    for(int j=0;j<QtdVert;j++){
-                        cout<<m[i][j].peso<<"\t|\t";
-                    }
-                    cout<<endl;
-                }
-
-                cout<<"\nArestas:\n\n\t|\t";
-
-                    for(int i=0;i<vet.size();i++){
-                    cout<<vet[i]<<"\t|\t";
-                }
-                cout<<"\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-
-                for(int i=0;i<vet.size();i++){
-                    cout<<vet[i]<<"\t|\t";
-                    for(int j=0;j<QtdVert;j++){
-                        cout<<m[i][j].rot<<"\t|\t";
-                    }
-                    cout<<endl;
-                }
-
+                debug(g);
                 break;
             default:
                 cout << "\n\tEscolha uma opção válida: \n\n\t";     //é o último "case", então não precisa de break
