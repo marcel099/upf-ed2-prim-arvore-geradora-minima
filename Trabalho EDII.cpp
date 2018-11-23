@@ -27,7 +27,6 @@ struct grafo{
     string **rotulo_arestas;
     int TamVert, TamArest;              //precisei saber quantas arestas possui esse grafo lá dentro do circuito
     vector<int> grau;
-    vector<bool> ArestVisit;              //Arestas Visitadas
 };
 
 int buscaVertice(vector<string> v,string s){
@@ -137,9 +136,10 @@ void incid(grafo g){
 
 void circuito(grafo g)          //Por onde começar...               //SÓ FALTA VOLTAR UM VÉRTICE QUANDO O VÉRTICE ATUAL NÃO TIVER ARESTAS NÃO VISITADAS/EXISTENTES PARA SEGUIR, e corrigir bugs para fazer funcionar (como out of range), e pensar em pssíveis lógicas para formar o circuito caso necessário
 {
+    vector<bool> ArestVisit;              //Arestas Visitadas
     bool b=false, formou=false;         //ainda não foi visitado            //formou circuito
     for (int i=0; i<g.TamArest; i++)
-        g.ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
+        ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
 
     int p;      //número da aresta
     vector<string> ArestasCircuito;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
@@ -148,19 +148,23 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
         if (g.grau[k] >= 2){                 //já elimina vértices isolados e vértices finais
             string VertAtual = g.rotulo_vertices[k];           //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
             while (!formou){        //enquanto não tiver formado circuito
+                bool existe = false;     //Supõe que não existe aresta não visitada a partir do vértice atual
                 for(int i=0; i<g.TamVert; i++){
-                    p = stoi(g.rotulo_arestas[k][i].substr(2, 2), nullptr);         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
-                    if (g.rotulo_arestas[k][i] != "" && !g.ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
-                        g.ArestVisit[p] = true;     //agora a aresta já foi visitada
+                    if (g.rotulo_arestas[k][i] != "")           //muda p somente se a aresta existir
+                        p = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr);         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
+
+                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
+                        ArestVisit[p] = true;     //agora a aresta já foi visitada
                         ArestasCircuito.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vecotr/pilha;
                         k = i;      //vai pro próximo vértice
+                        existe = true;  //existe aresta pra ser visitada a partir do vértice
                         if (k == VertOrig)
                             formou = true;
-//                        cout << "P: " << p << endl;
                         break;      //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
                     }
+                    if (existe == false)
+                        cout << "Ainda não deicidi como voltar o vértice\n";
                 }
-                //return;
             }
         }
         if (formou)     //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
@@ -170,10 +174,6 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
     for (int i=0; i<ArestasCircuito.size(); i++)
         cout << ArestasCircuito[i] << ' ';
     cout << "\n\n";
-
-//    for (int i=0; i<g.ArestVisit.size(); i++)
-//        cout << b << ' ';
-//    cout << endl;
 }
 
 void SeqGraus(grafo g)
