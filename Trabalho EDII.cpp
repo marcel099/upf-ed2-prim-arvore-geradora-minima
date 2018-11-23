@@ -5,7 +5,7 @@
 #include <algorithm>        //stable_sort
 #include <cctype>           //usar toupper
 #include <vector>
-//#include <stack>      //pilha se tornou desncessária
+#include <stack>      //pilha pode se tornar desncessária
 #include <string>           //usar stoi e substr
 #include <climits>          //INT_MAX
 using namespace std;
@@ -91,8 +91,6 @@ grafo leitura(grafo g){
     return g;
 }
 
-
-
 void grau(grafo g){
     string s;
     int num;
@@ -149,9 +147,10 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
         int VertOrig = k;       //Vértice por onde começou o circuito
         if (g.grau[k] >= 2){                 //já elimina vértices isolados e vértices finais
             VertPass.push(k);
+            circ.push_back(g.rotulo_vertices[k]);       //insere no circuito o vértice inicial
             string VertAtual = g.rotulo_vertices[k];           //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
             while (!formou){        //enquanto não tiver formado circuito
-                bool existe = false;     //Supõe que não existe aresta não visitada a partir do vértice atual
+                bool existe=false, passou=false;     //Supõe que não existe aresta não visitada a partir do vértice atual           //pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
                 for(int i=0; i<g.TamVert; i++){
                     if (g.rotulo_arestas[k][i] != "")           //muda p somente se a aresta existir
                         p = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr);         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
@@ -159,11 +158,12 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
                     if (g.rotulo_arestas[k][i] != "" && !ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
                    // cout << "ok\n";
                         ArestVisit[p] = true;     //agora a aresta já foi visitada
-                        circ.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vecotr/pilha;
+                        circ.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vector
                         k = i;      //vai pro próximo vértice
+                        circ.push_back(g.rotulo_vertices[k]);           //insere o vértice atual no vector
                         VertPass.push(k);       //insere na pilha depois de ter recebido a posição do novo vértice
                         existe = true;  //existe aresta pra ser visitada a partir do vértice
-                        if (k == VertOrig)
+                        if (k == VertOrig && circ.size() >= 5)
                             formou = true;
                         break;      //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
                     }
@@ -176,16 +176,19 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
                 if (!existe){       //Se não há nenhuma aresta incidente no vértice atual a disposição volta para o vértice anterior
                     if (VertPass.size() == 1)
                         break;
-                    VertPass.pop();
-                    k = VertPass.top();
-                    circ.pop_back();
+                    VertPass.pop();         //tira a posição vértice atual da pilha, pois este vértice não oferece arestas adequadas
+                    circ.pop_back();        //retira o vértice atual
+                    circ.pop_back();        //retira a aresta anterior
+                    k = VertPass.top();     //faz o k voltar para o vértice anterior
                    // cout << "Não existe aresta disponível\nRetornando para " << k << endl;;
                 }
               //  cout << endl;
             }
-        }
+        }           //depois faz operador ternário com o próximo if pra economizar linha, mas por ora deixa os comentários separados
         if (formou)     //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
             break;
+        else            //se não formou deixa o vector do circuito vazio
+            circ.clear();
     }
     if (!formou)        //se testou todas as possibilidades de circuitos e ainda assim não formou um circuito, então mostra mensagem
         cout << "\tNão existe um circuito para este grafo\n\n";
