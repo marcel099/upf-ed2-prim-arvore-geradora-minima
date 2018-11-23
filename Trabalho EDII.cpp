@@ -206,16 +206,16 @@ void SeqGraus(grafo g)
     cout << "\n\n";
 }
 
-void mostra(grafo g,char op){
+void mostra(grafo g,int op){
     switch(op){
-        case 'v':
+        case 0:
             cout << "\tVértices: ";                //só passando pra melhorar a legibilidade
             for(int i=0; i<g.TamVert; i++)
                 cout << g.rotulo_vertices[i] << ' ';
             cout << "\n\n";
             break;
 
-        case 'p':
+        case 1:
             cout << "\nPesos\t|\t";
             for(int i=0; i<g.TamVert; i++)
             cout << g.rotulo_vertices[i] << "\t|\t";
@@ -234,7 +234,7 @@ void mostra(grafo g,char op){
             }
             break;
 
-        case 'a':
+        case 2:
             cout << "\nArestas\t|\t";
             for(int i=0; i<g.TamVert; i++)
                 cout << g.rotulo_vertices[i] << "\t|\t";
@@ -327,18 +327,8 @@ int main()
                 cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
                 while (cout << "\n\tDeseja ver: " && cin >> num && num!=0 && num!=1 && num!=2)
                     cout << "\tInválido\n";
-                switch(num){
-                    case 0:
-                        mostra(g,'v');
-                        break;
-                    case 1:
-                        mostra(g,'p');
-                        break;
-                    case 2:
-                        mostra(g,'a');
-                        break;
-                }
-                break;
+                mostra(g,num);
+            break;
             case 'G':
                 grau(g);
                 break;
