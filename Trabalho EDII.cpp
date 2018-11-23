@@ -250,10 +250,10 @@ void mostra(grafo g,char op){
     }
 }
 
-int valor_min(vector<int> key, vector<bool> nao_inclusos,int tam){
+int valor_min(vector<int> key, vector<bool> incluso,int tam){
 int min = INT_MAX, min_index;
 for (int v = 0; v < tam; v++)
-    if (nao_inclusos[v] == false && key[v] < min)
+    if (incluso[v] == false && key[v] < min)
         min = key[v], min_index = v;
 return min_index;
 }
@@ -266,36 +266,36 @@ void agm(grafo g){
     vector<int> key(g.TamVert);// Valor chave usado para pegar o peso minimo
     fill(key.begin(),key.end(),INT_MAX);// Inicializa todas as chaves como infinito
 
-    vector<bool> nao_inclusos(g.TamVert);// Representar um conjunto de vertices ainda não inclusos na AGM
-    fill(nao_inclusos.begin(),nao_inclusos.end(),false);
+    vector<bool> incluso(g.TamVert);// Representar um conjunto de vertices ainda não inclusos na AGM
+    fill(incluso.begin(),incluso.end(),false);
 
     // Sempre inclui o primeiro vertice na AGM
     // chave 0 para que este vertice seja pego como primeiro vertice
-    key[0] = 0;
-    v_agm[0] = -1; // Primeiro nodo é sempre a raíz da AGM
+    key[0] = 0;     //ão pergute pq não sei praq serve essa e a linha de baixo mas sem isso o programa crasha
+    v_agm[0] =0;
 
     for (int count = 0; count < g.TamVert-1; count++)
     {
-        int u = valor_min(key, nao_inclusos,g.rotulo_vertices.size());// Escolhe o vertice com chave minima da lista de vertices ainda não inclusos na AGM
+        int u = valor_min(key, incluso,g.rotulo_vertices.size());// Escolhe o vertice com chave minima da lista de vertices ainda não inclusos na AGM
 
         // Adiciona o vertice escolhido ao conjunto da AGM
-        nao_inclusos[u] = true;
+        incluso[u] = true;
 
         // Atualiza o valor chave e o indice pai dos vértices adjacentes do vértice escolhido
         // Considerar apenas vértices ainda não inclusos na AGM
         for (int v = 0; v < g.TamVert; v++)
 
         // graph[u][v] is non zero only for adjacent vertices of m
-        // nao_inclusos[v] is false for vertices not yet included in MST
+        // incluso[v] is false for vertices not yet included in MST
         // Update the key only if graph[u][v] is smaller than key[v]
-        if (g.pesos[u][v] && nao_inclusos[v] == false && g.pesos[u][v] < key[v])
+        if (g.pesos[u][v] && incluso[v] == false && g.pesos[u][v] < key[v])
             v_agm[v] = u, key[v] = g.pesos[u][v];
     }
 
     int cont=0;
     cout<<"Edge \tWeight\n";
     for (int i = 1; i < g.TamVert; i++){
-        cout<<v_agm[i]<<" - "<<i<<"\t"<<g.pesos[i][v_agm[i]]<<"\n";
+        cout<<g.rotulo_vertices[v_agm[i]]<<" - "<<g.rotulo_vertices[i]<<"\t"<<g.pesos[i][v_agm[i]]<<"\n";
         cont+=g.pesos[i][v_agm[i]];
     }
     cout<<"Total: "<<cont<<"\n";
@@ -338,7 +338,6 @@ int main()
                         mostra(g,'a');
                         break;
                 }
-                mostra(g,'h');
                 break;
             case 'G':
                 grau(g);
