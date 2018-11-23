@@ -133,64 +133,56 @@ void incid(grafo g){
     cout << "\n\tRótulo não existe.\n\n";
 }
 
-void circuito(grafo g)          //Por onde começar...               //SÓ FALTA VOLTAR UM VÉRTICE QUANDO O VÉRTICE ATUAL NÃO TIVER ARESTAS NÃO VISITADAS/EXISTENTES PARA SEGUIR, e corrigir bugs para fazer funcionar (como out of range), e pensar em pssíveis lógicas para formar o circuito caso necessário
+void circuito(grafo g)
 {
-    vector<bool> ArestVisit;              //Arestas Visitadas
-    bool b=false, formou=false;         //ainda não foi visitado            //formou circuito
+    vector<bool> ArestVisit;                                 //Arestas Visitadas
+    bool b=false, formou=false;                              //ainda não foi visitado            //formou circuito
     for (int i=0; i<g.TamArest; i++)
-        ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
+        ArestVisit.push_back(b);                            //colocando um bool para cada aresta no vecotr de bools
 
-    int pos;      //número da aresta
-    vector<string> circ;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
-    stack<int> VertPass;     //Posição no vector dos Vértices Passados
-    for (int k=0; k<g.TamVert; k++){         //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
-        int VertOrig = k;       //Vértice por onde começou o circuito
-        if (g.grau[k] >= 2){                 //já elimina vértices isolados e vértices finais
+    int pos;                                                //posição da aresta encontrada
+    vector<string> circ;
+    stack<int> VertPass;                                    //Posição no vector dos Vértices Passados
+    for (int k=0; k<g.TamVert; k++){                          //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
+        int VertOrig = k;                                     //Vértice por onde começou o circuito
+        if (g.grau[k] >= 2){                                  //já elimina vértices isolados e vértices finais
             VertPass.push(k);
-            circ.push_back(g.rotulo_vertices[k]);       //insere no circuito o vértice inicial
-            string VertAtual = g.rotulo_vertices[k];           //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
-            while (!formou){        //enquanto não tiver formado circuito
-                bool existe=false, passou=false;     //Supõe que não existe aresta não visitada a partir do vértice atual           //pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
+            circ.push_back(g.rotulo_vertices[k]);                                       //insere no circuito o vértice inicial
+            string VertAtual = g.rotulo_vertices[k];                                  //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
+            while (!formou){                                                  //enquanto não tiver formado circuito
+                bool existe=false, passou=false;                              //Supõe que não existe aresta não visitada a partir do vértice atual           //pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
                 for(int i=0; i<g.TamVert; i++){
-                    if (g.rotulo_arestas[k][i] != "")           //muda p somente se a aresta existir
-                        pos = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr) - 1;         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
-                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[pos]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
-                   // cout << "ok\n";
-                        //cout << "P: " << pos << endl;
-                        ArestVisit[pos] = true;     //agora a aresta já foi visitada
-                        circ.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vector
-                        k = i;      //vai pro próximo vértice
-                        circ.push_back(g.rotulo_vertices[k]);           //insere o vértice atual no vector
-                        VertPass.push(k);       //insere na pilha depois de ter recebido a posição do novo vértice
-                        existe = true;  //existe aresta pra ser visitada a partir do vértice
-                        if (k == VertOrig && circ.size() >= 5)          //precisa que o tamanho seja maior que 5 pra evitar de dizer que encontrou circuito ao voltar pro vértice incial vindo de um vértice que não oferece boas arestas
+                    if (g.rotulo_arestas[k][i] != "")                                                    //muda p somente se a aresta existir, pois se não existir não consegue ler p
+                        pos = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr) - 1;                        //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
+                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[pos]){                                //só vai entrar quando aresta existir e ainda não tiver sido visitada
+                        ArestVisit[pos] = true;                                                 //agora a aresta já foi visitada
+                        circ.push_back(g.rotulo_arestas[k][i]);                              //insere essa aresta no vector
+                        k = i;                                                       //vai pro próximo vértice
+                        circ.push_back(g.rotulo_vertices[k]);                                        //insere o vértice atual no vector
+                        VertPass.push(k);                                               //insere na pilha depois de ter recebido a posição do novo vértice
+                        existe = true;                                                       //existe aresta pra ser visitada a partir do vértice
+                        if (k == VertOrig && circ.size() >= 5)                             //precisa que o tamanho seja maior que 5 pra evitar de dizer que encontrou circuito ao voltar pro vértice incial vindo de um vértice que não oferece boas arestas
                             formou = true;
-                        break;      //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
+                        break;                                                   //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
                     }
                 }
-//                cout << "Existe aresta: " << existe << endl;
-//                cout << "Lista de vértices do circuito: ";
-//                for (int i=0; i<VertPass.size(); i++)
-//                    cout << g.rotulo_vertices[k] << ' ';
-                //cout << "\nTamanho da pilha: " << VertPass.size() << endl;
-                if (!existe){       //Se não há nenhuma aresta incidente no vértice atual a disposição volta para o vértice anterior
+
+                if (!existe){                                                     //Se não há nenhuma aresta incidente no vértice atual a disposição volta para o vértice anterior
                     if (VertPass.size() == 1)
                         break;
-                    VertPass.pop();         //tira a posição vértice atual da pilha, pois este vértice não oferece arestas adequadas
-                    circ.pop_back();        //retira o vértice atual
-                    circ.pop_back();        //retira a aresta anterior
-                    k = VertPass.top();     //faz o k voltar para o vértice anterior
-                   // cout << "Não existe aresta disponível\nRetornando para " << k << endl;;
+                    VertPass.pop();                                               //tira a posição vértice atual da pilha, pois este vértice não oferece arestas adequadas
+                    circ.pop_back();                                             //retira o vértice atual
+                    circ.pop_back();                                                 //retira a aresta anterior
+                    k = VertPass.top();                                           //faz o k voltar para o vértice anterior
                 }
-              //  cout << endl;
             }
-        }           //depois faz operador ternário com o próximo if pra economizar linha, mas por ora deixa os comentários separados
-        if (formou)     //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
+        }
+        if (formou)                                  //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
             break;
-        else            //se não formou deixa o vector do circuito vazio
+        else                                         //se não formou deixa o vector do circuito vazio
             circ.clear();
     }
-    if (!formou)        //se testou todas as possibilidades de circuitos e ainda assim não formou um circuito, então mostra mensagem
+    if (!formou)                                                                 //se testou todas as possibilidades de circuitos e ainda assim não formou um circuito, então mostra mensagem
         cout << "\tNão existe um circuito para este grafo\n\n";
     else{
         cout << "\tCircuito: ";
