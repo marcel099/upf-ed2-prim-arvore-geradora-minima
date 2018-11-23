@@ -1,8 +1,8 @@
 #include <iostream>
-#include <fstream>          //usar toupper
-#include <stdlib.h>         //aceitar exit
+#include <fstream>
+#include <stdlib.h>         //exit
 #include <clocale>          //aceitar acentuação
-#include <algorithm>        //usava fill, mas agora usa stable_sort                  //Como parou de aceitar fill dá pra esconder
+#include <algorithm>        //stable_sort
 #include <cctype>           //usar toupper
 #include <vector>
 using namespace std;
@@ -212,7 +212,7 @@ int main()
                 break;
             case 'M':
                 cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
-                while (cout << "\n\tDeseja ver: " && cin >> num && num!=1 && num!=2 && num!=3)
+                while (cout << "\n\tDeseja ver: " && cin >> num && num!=0 && num!=1 && num!=2)
                     cout << "\tInválido\n";
                 switch(num){
                     case 0:
