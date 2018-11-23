@@ -7,6 +7,7 @@
 #include <vector>
 #include <stack>
 #include <string>           //usar stoi
+#include <climits>          //INT_MAX
 using namespace std;
 void menu(){
     system("cls");
@@ -91,7 +92,6 @@ grafo leitura(grafo g){
 }
 
 
-void agv(){}
 
 void grau(grafo g){
     string s;
@@ -250,6 +250,57 @@ void mostra(grafo g,char op){
     }
 }
 
+int valor_min(vector<int> key, vector<bool> nao_inclusos,int tam){
+int min = INT_MAX, min_index;
+for (int v = 0; v < tam; v++)
+    if (nao_inclusos[v] == false && key[v] < min)
+        min = key[v], min_index = v;
+return min_index;
+}
+
+
+// Função para construir AGM para um grafo representado por uma matriz de adjacencia
+void agm(grafo g){
+    vector<int> v_agm(g.TamVert);// Vetor para armazenar a AGM construida
+
+    vector<int> key(g.TamVert);// Valor chave usado para pegar o peso minimo
+    fill(key.begin(),key.end(),INT_MAX);// Inicializa todas as chaves como infinito
+
+    vector<bool> nao_inclusos(g.TamVert);// Representar um conjunto de vertices ainda não inclusos na AGM
+    fill(nao_inclusos.begin(),nao_inclusos.end(),false);
+
+    // Sempre inclui o primeiro vertice na AGM
+    // chave 0 para que este vertice seja pego como primeiro vertice
+    key[0] = 0;
+    v_agm[0] = -1; // Primeiro nodo é sempre a raíz da AGM
+
+    for (int count = 0; count < g.TamVert-1; count++)
+    {
+        int u = valor_min(key, nao_inclusos,g.rotulo_vertices.size());// Escolhe o vertice com chave minima da lista de vertices ainda não inclusos na AGM
+
+        // Adiciona o vertice escolhido ao conjunto da AGM
+        nao_inclusos[u] = true;
+
+        // Atualiza o valor chave e o indice pai dos vértices adjacentes do vértice escolhido
+        // Considerar apenas vértices ainda não inclusos na AGM
+        for (int v = 0; v < g.TamVert; v++)
+
+        // graph[u][v] is non zero only for adjacent vertices of m
+        // nao_inclusos[v] is false for vertices not yet included in MST
+        // Update the key only if graph[u][v] is smaller than key[v]
+        if (g.pesos[u][v] && nao_inclusos[v] == false && g.pesos[u][v] < key[v])
+            v_agm[v] = u, key[v] = g.pesos[u][v];
+    }
+
+    int cont=0;
+    cout<<"Edge \tWeight\n";
+    for (int i = 1; i < g.TamVert; i++){
+        cout<<v_agm[i]<<" - "<<i<<"\t"<<g.pesos[i][v_agm[i]]<<"\n";
+        cont+=g.pesos[i][v_agm[i]];
+    }
+    cout<<"Total: "<<cont<<"\n";
+}
+
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
@@ -270,7 +321,7 @@ int main()
         op=toupper(op);
         switch(op){
             case 'A':
-//                agf();
+                agm(g);
                 break;
             case 'M':
                 cout << "\n\t(0) Vértices\n\t(1) Pesos\n\t(2) Arestas\n";
