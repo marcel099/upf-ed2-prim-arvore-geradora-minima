@@ -5,6 +5,7 @@
 #include <algorithm>        //stable_sort
 #include <cctype>           //usar toupper
 #include <vector>
+#include <string>           //usar stoi
 using namespace std;
 void menu(){
     system("cls");
@@ -19,13 +20,14 @@ void menu(){
          << "\tE - Encerrar Programa\n"
          << "\n----------------------------------------\n\n";
 }
-
+//minha anotação pra eu não esquecer mais por enquanto: Ctrl + R -> Localizar e Substituir
 struct grafo{
     vector<string> rotulo_vertices;
     int **pesos;
     string **rotulo_arestas;
-    int tam;
+    int TamVert, TamArest;              //precisei saber quantas arestas possui esse grafo lá dentro do circuito
     vector<int> grau;
+    vector<bool> ArestVisit;              //Arestas Visitadas
 };
 
 int buscaVertice(vector<string> v,string s){
@@ -47,22 +49,23 @@ grafo leitura(grafo g){
     }
 
     arq >> tamanho;
-    g.tam = tamanho;
-    for(int i=0; i<g.tam; i++){
+    g.TamVert = tamanho;
+    for(int i=0; i<g.TamVert; i++){
         arq >> vertice;
         g.rotulo_vertices.push_back(vertice);
     }
     //criação da matrizes: pesos e rotulo_arestas
-    g.pesos = new int*[g.tam];
-    g.rotulo_arestas = new string*[g.tam];
-    for (int i=0; i<g.tam; i++){
-        g.pesos[i] = new int[g.tam];
-        g.rotulo_arestas[i] = new string[g.tam];
-        for (int j=0; j<g.tam; j++)
+    g.pesos = new int*[g.TamVert];
+    g.rotulo_arestas = new string*[g.TamVert];
+    for (int i=0; i<g.TamVert; i++){
+        g.pesos[i] = new int[g.TamVert];
+        g.rotulo_arestas[i] = new string[g.TamVert];
+        for (int j=0; j<g.TamVert; j++)
             g.pesos[i][j] = 0;
     }
     int m[2];
-    arq >> tamanho;
+    arq >> tamanho;                                                 //dá pra melhorar esse código, usando as variáveis da própria struct grafo
+    g.TamArest = tamanho;                                            //precisei fazer apenas isso pra poder continuar fazendo a função de circuito
     for(int i=0; i<tamanho; i++){
         arq >> aresta;          //leitura do rotulo da aresta
         for(int j=0; j<2; j++){            //leitura dos 2 indices a serem armazenados na matriz
@@ -76,9 +79,9 @@ grafo leitura(grafo g){
         g.rotulo_arestas[m[1]][m[0]] = aresta; //leia linha acima
     }
 
-    for(int i=0; i<g.tam; i++){
+    for(int i=0; i<g.TamVert; i++){
         cont=0;
-        for(int j=0; j<g.tam; j++)
+        for(int j=0; j<g.TamVert; j++)
             if(g.pesos[i][j] > 0)
                 cont++;
         g.grau.push_back(cont);
@@ -103,7 +106,7 @@ void grau(grafo g){
 
 void finais(grafo g){
     vector<string> vf;              //vector que guarda o rótulo dos nodos com grau 1
-    for (int i=0; i<g.tam; i++)
+    for (int i=0; i<g.TamVert; i++)
         if (g.grau[i] == 1)                     //se o grau for 1 insere no vector
             vf.push_back(g.rotulo_vertices[i]);
 
@@ -122,8 +125,8 @@ void incid(grafo g){
     cout << "\n\tDigite o rótulo de uma aresta: ";
     cin >> s;
 
-    for(int i=0; i<g.tam; i++){
-        for(int j=0; j<g.tam; j++)
+    for(int i=0; i<g.TamVert; i++){
+        for(int j=0; j<g.TamVert; j++)          //como isso tá funcionando sem as chaves?
             if(s == g.rotulo_arestas[i][j]){
                 cout << "\n\tRótulos incidentes: " << g.rotulo_vertices[i] << ' ' << g.rotulo_vertices[j] << "\n\n";        //Não sei pq vcs gostam de deixar tudo grudado, mas tbm nao sei pq gosto de diexar separado
                 return;
@@ -132,7 +135,46 @@ void incid(grafo g){
     cout << "\n\tRótulo não existe.\n\n";
 }
 
-void circuito(){}
+void circuito(grafo g)          //Por onde começar...               //SÓ FALTA VOLTAR UM VÉRTICE QUANDO O VÉRTICE ATUAL NÃO TIVER ARESTAS NÃO VISITADAS/EXISTENTES PARA SEGUIR
+{
+    bool b=false, formou=false;         //ainda não foi visitado            //formou circuito
+    for (int i=0; i<g.TamArest; i++)
+        g.ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
+
+    int p;      //número da aresta
+    vector<string> ArestasCircuito;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
+    for (int k=0; k<g.TamVert; k++){         //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
+        int VertOrig = k;       //Vértice por onde começou o circuito
+        if (g.grau[k] >= 2){                 //já elimina vértices isolados e vértices finais
+            string VertAtual = g.rotulo_vertices[k];           //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
+            while (!formou){        //enquanto não tiver formado circuito
+                for(int i=0; i<g.TamVert; i++){
+                    p = stoi(g.rotulo_arestas[k][i].substr(2, 2), nullptr);         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
+                    if (g.rotulo_arestas[k][i] != "" && !g.ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
+                        g.ArestVisit[p] = true;     //agora a aresta já foi visitada
+                        ArestasCircuito.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vecotr/pilha;
+                        k = i;      //vai pro próximo vértice
+                        if (k == VertOrig)
+                            formou = true;
+//                        cout << "P: " << p << endl;
+                        break;      //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
+                    }
+                }
+                //return;
+            }
+        }
+        if (formou)     //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
+            break;
+    }
+    cout << "\tCircuito: ";
+    for (int i=0; i<ArestasCircuito.size(); i++)
+        cout << ArestasCircuito[i] << ' ';
+    cout << "\n\n";
+
+//    for (int i=0; i<g.ArestVisit.size(); i++)
+//        cout << b << ' ';
+//    cout << endl;
+}
 
 void SeqGraus(grafo g)
 {
@@ -147,21 +189,21 @@ void SeqGraus(grafo g)
 void mostra(grafo g,char op){
     switch(op){
         case 'v':
-            cout << "Vértices: ";                //só passando pra melhorar a legibilidade
-            for(int i=0; i<g.tam; i++)
+            cout << "\tVértices: ";                //só passando pra melhorar a legibilidade
+            for(int i=0; i<g.TamVert; i++)
                 cout << g.rotulo_vertices[i] << ' ';
-            cout << endl;
+            cout << "\n\n";
             break;
 
         case 'p':
             cout << "\nPesos\t|\t";
-            for(int i=0; i<g.tam; i++)
+            for(int i=0; i<g.TamVert; i++)
             cout << g.rotulo_vertices[i] << "\t|\t";
             cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
 
-            for(int i=0; i<g.tam; i++){
+            for(int i=0; i<g.TamVert; i++){
                 cout << g.rotulo_vertices[i] << "\t|\t";
-                for(int j=0; j<g.tam; j++){
+                for(int j=0; j<g.TamVert; j++){
                     if(g.pesos[i][j]==0)
                         cout<<"";
                     else
@@ -174,12 +216,12 @@ void mostra(grafo g,char op){
 
         case 'a':
             cout << "\nArestas\t|\t";
-            for(int i=0; i<g.tam; i++)
+            for(int i=0; i<g.TamVert; i++)
                 cout << g.rotulo_vertices[i] << "\t|\t";
             cout << "\n\t|---------------|---------------|---------------|---------------|---------------|\n";
-            for(int i=0; i<g.tam; i++){
+            for(int i=0; i<g.TamVert; i++){
                 cout << g.rotulo_vertices[i] << "\t|\t";
-                for(int j=0; j<g.tam; j++){
+                for(int j=0; j<g.TamVert; j++){
                     cout << g.rotulo_arestas[i][j] << "\t|\t";
                 }
                 cout << endl;
@@ -196,7 +238,7 @@ int main()
 
     char op;
     do{
-        int num,cont=0, i, j, aux=g.tam;
+        int num,cont=0, i, j, aux=g.TamVert;
         vector<int> graus;
         vector<string> vf;      //Vértices Finais
         bool teste=false;
@@ -237,7 +279,7 @@ int main()
                 incid(g);
                 break;
             case 'C':
-//                circuito();
+                circuito(g);
                 break;
             case 'S':
                 SeqGraus(g);
