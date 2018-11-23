@@ -5,8 +5,8 @@
 #include <algorithm>        //stable_sort
 #include <cctype>           //usar toupper
 #include <vector>
-#include <stack>
-#include <string>           //usar stoi
+//#include <stack>      //pilha se tornou desncessária
+#include <string>           //usar stoi e substr
 #include <climits>          //INT_MAX
 using namespace std;
 void menu(){
@@ -143,7 +143,7 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
         ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
 
     int p;      //número da aresta
-    vector<string> ArestasCircuito;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
+    vector<string> circ;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
     stack<int> VertPass;     //Posição no vector dos Vértices Passados
     for (int k=0; k<g.TamVert; k++){         //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
         int VertOrig = k;       //Vértice por onde começou o circuito
@@ -159,7 +159,7 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
                     if (g.rotulo_arestas[k][i] != "" && !ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
                    // cout << "ok\n";
                         ArestVisit[p] = true;     //agora a aresta já foi visitada
-                        ArestasCircuito.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vecotr/pilha;
+                        circ.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vecotr/pilha;
                         k = i;      //vai pro próximo vértice
                         VertPass.push(k);       //insere na pilha depois de ter recebido a posição do novo vértice
                         existe = true;  //existe aresta pra ser visitada a partir do vértice
@@ -178,6 +178,7 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
                         break;
                     VertPass.pop();
                     k = VertPass.top();
+                    circ.pop_back();
                    // cout << "Não existe aresta disponível\nRetornando para " << k << endl;;
                 }
               //  cout << endl;
@@ -190,8 +191,8 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
         cout << "\tNão existe um circuito para este grafo\n\n";
     else{
         cout << "\tCircuito: ";
-        for (int i=0; i<ArestasCircuito.size(); i++)
-            cout << ArestasCircuito[i] << ' ';
+        for (int i=0; i<circ.size(); i++)
+            cout << circ[i] << ' ';
         cout << "\n\n";
     }
 }
