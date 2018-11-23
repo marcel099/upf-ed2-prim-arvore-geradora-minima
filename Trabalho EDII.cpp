@@ -135,7 +135,7 @@ void incid(grafo g){
     cout << "\n\tRótulo não existe.\n\n";
 }
 
-void circuito(grafo g)          //Por onde começar...               //SÓ FALTA VOLTAR UM VÉRTICE QUANDO O VÉRTICE ATUAL NÃO TIVER ARESTAS NÃO VISITADAS/EXISTENTES PARA SEGUIR
+void circuito(grafo g)          //Por onde começar...               //SÓ FALTA VOLTAR UM VÉRTICE QUANDO O VÉRTICE ATUAL NÃO TIVER ARESTAS NÃO VISITADAS/EXISTENTES PARA SEGUIR, e corrigir bugs para fazer funcionar (como out of range), e pensar em pssíveis lógicas para formar o circuito caso necessário
 {
     bool b=false, formou=false;         //ainda não foi visitado            //formou circuito
     for (int i=0; i<g.TamArest; i++)
