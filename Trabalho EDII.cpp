@@ -140,7 +140,7 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
     for (int i=0; i<g.TamArest; i++)
         ArestVisit.push_back(b);          //colocando um bool para cada aresta no vecotr de bools
 
-    int p;      //número da aresta
+    int pos;      //número da aresta
     vector<string> circ;         //usar pilha não vai permitir mostrar do incio do circuito pro fim, a não ser que eu use duas pilhas pra inverter
     stack<int> VertPass;     //Posição no vector dos Vértices Passados
     for (int k=0; k<g.TamVert; k++){         //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
@@ -153,17 +153,17 @@ void circuito(grafo g)          //Por onde começar...               //SÓ FALTA
                 bool existe=false, passou=false;     //Supõe que não existe aresta não visitada a partir do vértice atual           //pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
                 for(int i=0; i<g.TamVert; i++){
                     if (g.rotulo_arestas[k][i] != "")           //muda p somente se a aresta existir
-                        p = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr);         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
-
-                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[p]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
+                        pos = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr) - 1;         //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
+                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[pos]){      //só vai entrar quando aresta existir e ainda não tiver sido visitada
                    // cout << "ok\n";
-                        ArestVisit[p] = true;     //agora a aresta já foi visitada
+                        //cout << "P: " << pos << endl;
+                        ArestVisit[pos] = true;     //agora a aresta já foi visitada
                         circ.push_back(g.rotulo_arestas[k][i]);               //insere essa aresta no vector
                         k = i;      //vai pro próximo vértice
                         circ.push_back(g.rotulo_vertices[k]);           //insere o vértice atual no vector
                         VertPass.push(k);       //insere na pilha depois de ter recebido a posição do novo vértice
                         existe = true;  //existe aresta pra ser visitada a partir do vértice
-                        if (k == VertOrig && circ.size() >= 5)
+                        if (k == VertOrig && circ.size() >= 5)          //precisa que o tamanho seja maior que 5 pra evitar de dizer que encontrou circuito ao voltar pro vértice incial vindo de um vértice que não oferece boas arestas
                             formou = true;
                         break;      //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
                     }
