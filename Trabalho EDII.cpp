@@ -287,7 +287,7 @@ void shutdown(){ //facíl de entender, e o prof n precisa saber dessa função
     }
 }
 
-int valor_min(vector<int> key, vector<bool> incluso,int tam){
+/*int valor_min(vector<int> key, vector<bool> incluso,int tam){
 int min = INT_MAX, min_index;
 for (int v = 0; v < tam; v++)
     if (incluso[v] == false && key[v] < min)
@@ -335,6 +335,58 @@ void agm(grafo g){
         cont+=g.pesos[i][v_agm[i]];
     }
     cout<<"Total: "<<cont<<"\n";
+}*/
+
+void agm(grafo g){
+    string s;
+    int u, menor, soma = 0;
+
+    vector<string> vem_de(g.TamVert);       //Cria vetor par armazenar os vertices de origem
+    fill(vem_de.begin(),vem_de.end(),"---");    //Iniacila o vetor com ---
+
+    vector<bool> incluso(g.TamVert);        //Cria um vetor para testar se ja foi visitado
+    fill(incluso.begin(),incluso.end(),false);  //Inicializa com false
+
+    vector<int> cost(g.TamVert);    //Vetor para guardar os pesos mínimos
+    fill(cost.begin(),cost.end(),INT_MAX);  //Inicializa com a capacidade máxima de um int
+
+    cout << "\tVertice inicial: ";  //Lê um vértice inicial
+    cin >> s;
+    u = buscaVertice(g.rotulo_vertices, s); //Busca o índice do vértice inicial
+    if(u == -1){
+        cout << "\n\tVertice inexistente!\n\n";
+        return;
+    }
+
+    incluso[u] = true;  //Marca o vértice inicial como já visitado
+    cost[u] = 0;    //Adiciona peso 0 ao vértice de inicio
+    for(int cont=0; cont<g.TamVert; cont++){
+        if(g.grau[u] > 0){  //Testa se o vertice escolhido possui adjacentes
+            for(int i=0; i<g.TamVert; i++){
+                if(g.pesos[u][i]>0 && g.pesos[u][i]<cost[i] && incluso[i]==false){  //Encotra os adjacentes e adiciona o peso e o rotulo de origem
+                    cost[i] = g.pesos[u][i];
+                    vem_de[i] = g.rotulo_vertices[u];
+                }
+            }
+            menor = INT_MAX;    //Menor recebe valor máximo
+            for(int j=0; j<cost.size(); j++){   //Procura o maior valor dentre os visitados
+                if(cost[j]<menor && incluso[j]==false){
+                    menor = cost[j];    //Recebe o menor valor
+                    u = j;  //U recebe o indice do menor valor
+                }
+            }
+            incluso[u] = true;  //Vertice de menor valor é marcado como visitado e rercomeça o laço
+        }
+    }
+    cout << "\n\tInicio - Vindo_de - Peso\n";     //Mostra a tabela final
+    for(int i=0; i<g.TamVert; i++){
+        cout << "\t  " << g.rotulo_vertices[i] << "  |   "
+             << vem_de[i] << "\t  |  "
+             << cost[i] <<"\n";
+
+        soma += cost[i];
+    }
+    cout << "\n\tTotal: " << soma << "\n";
 }
 
 int main()
