@@ -136,21 +136,31 @@ void incid(grafo g){
 void circuito(grafo g)
 {
     vector<bool> ArestVisit;                                 //Arestas Visitadas
-    bool b=false, formou=false;                              //ainda não foi visitado            //formou circuito
-    for (int i=0; i<g.TamArest; i++)
-        ArestVisit.push_back(b);                            //colocando um bool para cada aresta no vecotr de bools
+    bool formou=false;                              //ainda não foi visitado            //formou circuito
 
     int pos;                                                //posição da aresta encontrada
     vector<string> circ;
-    stack<int> VertPass;                                    //Posição no vector dos Vértices Passados
     for (int k=0; k<g.TamVert; k++){                          //se o primeiro vértice não formar circuito não quer dizer que o grafo não possui circuito
+        stack<int> VertPass;                                    //Posição no vector dos Vértices Passados
+
+        while (!ArestVisit.empty())//{                    //se já percorreu todo o grafo antes é necessário remarcar todas as arestas como não visitadas
+            ArestVisit.clear();
+//            cout << "Esvaziou\n";
+//        }
+        for (int i=0; i<g.TamArest; i++)
+            ArestVisit.push_back(false);                 //colocando um bool false para cada aresta no vector de bools, indicando que ainda não foram visitados
+
+//        cout << "VertPass tam no começo: " << VertPass.size() << endl;
+//        cout << "K original: " << k << endl;
         int VertOrig = k;                                     //Vértice por onde começou o circuito
         if (g.grau[k] >= 2){                                  //já elimina vértices isolados e vértices finais
             VertPass.push(k);
             circ.push_back(g.rotulo_vertices[k]);                                       //insere no circuito o vértice inicial
             string VertAtual = g.rotulo_vertices[k];                                  //faz o Vértice Atual receber o rótulo do vértice escolhido para começar o circuito
             while (!formou){                                                  //enquanto não tiver formado circuito
-                bool existe=false, passou=false;                              //Supõe que não existe aresta não visitada a partir do vértice atual           //pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
+//                cout << "K: " << k << endl;
+//                cout << "Vértice Anterior: " << g.rotulo_vertices[k] << endl;
+                bool existe=false;                              //Supõe que não existe aresta não visitada a partir do vértice atual           //bool passou: pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
                 for(int i=0; i<g.TamVert; i++){
                     if (g.rotulo_arestas[k][i] != "")                                                    //muda p somente se a aresta existir, pois se não existir não consegue ler p
                         pos = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr) - 1;                        //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
@@ -166,7 +176,8 @@ void circuito(grafo g)
                         break;                                                   //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
                     }
                 }
-
+//                cout << "K: " << k << endl;
+//                cout << "Vértice Atual: " << g.rotulo_vertices[k] << endl << endl;
                 if (!existe){                                                     //Se não há nenhuma aresta incidente no vértice atual a disposição volta para o vértice anterior
                     if (VertPass.size() == 1)
                         break;
@@ -177,6 +188,10 @@ void circuito(grafo g)
                 }
             }
         }
+//        else
+//            cout << "\tVértice inapropriado\n";
+//        cout << "VertPass tam no fim: " << VertPass.size() << endl;
+//        cout << "\tTerminou uma passada\n\n";
         if (formou)                                  //após ter formado um circuito sair do laço que busca um circuito a partir de cada nodo
             break;
         else                                         //se não formou deixa o vector do circuito vazio
