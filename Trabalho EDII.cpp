@@ -136,7 +136,7 @@ void incid(grafo g){
 void circuito(grafo g)
 {
     vector<bool> ArestVisit;                                 //Arestas Visitadas
-    bool formou=false;                              //ainda não foi visitado            //formou circuito
+    bool formou=false;                                       //formou circuito
 
     int pos;                                                //posição da aresta encontrada
     vector<string> circ;
@@ -152,31 +152,36 @@ void circuito(grafo g)
         if (g.grau[k] >= 2){                                  //já elimina vértices isolados e vértices finais
             VertPass.push(k);                                                           //insere na PILHAo vértice inicial
             circ.push_back(g.rotulo_vertices[k]);                                       //insere no CIRCUITO o vértice inicial
+
             while (!formou){                                                  //enquanto não tiver formado circuito
                 bool existe=false;                              //Supõe que não existe aresta não visitada a partir do vértice atual           //bool passou: pra saber se já passou por todo o grafo a partir de uma determinada posição e mesmo assim não encontrou circuito
                 for(int i=0; i<g.TamVert; i++){
-                    if (g.rotulo_arestas[k][i] != "")                                                    //muda p somente se a aresta existir, pois se não existir não consegue ler p
+                    if (g.rotulo_arestas[k][i] != ""){                                            //se aresta existir poderá realizar as operações referentes a aresta
                         pos = stoi(g.rotulo_arestas[k][i].substr(1, 2), nullptr) - 1;                        //lê a posição da aresta para poder mudar no vector de bool         //no entanto, isso não funcionará se os números das aresas do arquivo xispa não estiverem perfeitamente consecutivos (1,2,3, etc)       //para contornar este possível problema teria que colocar um vector<string> para as arestas
-                    if (g.rotulo_arestas[k][i] != "" && !ArestVisit[pos]){                                //só vai entrar quando aresta existir e ainda não tiver sido visitada
-                        ArestVisit[pos] = true;                                                 //agora a aresta já foi visitada
-                        circ.push_back(g.rotulo_arestas[k][i]);                              //insere essa aresta no vector
-                        k = i;                                                       //vai pro próximo vértice
-                        circ.push_back(g.rotulo_vertices[k]);                                        //insere o vértice atual no vector
-                        VertPass.push(k);                                               //insere na pilha depois de ter recebido a posição do novo vértice
-                        existe = true;                                                       //existe aresta pra ser visitada a partir do vértice
-                        if (k == VertOrig && circ.size() >= 5)                             //precisa que o tamanho seja maior que 5 pra evitar de dizer que encontrou circuito ao voltar pro vértice incial vindo de um vértice que não oferece boas arestas
-                            formou = true;
-                        break;                                                   //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
+                        if (!ArestVisit[pos]){                                                    //só vai entrar se a aresta ainda não foi visitada
+                            ArestVisit[pos] = true;                                                        //agora a aresta já foi visitada
+                            existe = true;                                                                 //existe aresta pra ser visitada a partir do vértice
+
+                            circ.push_back(g.rotulo_arestas[k][i]);                                      //insere essa aresta no vector
+                            k = i;                                                                       //vai pro próximo vértice
+                            circ.push_back(g.rotulo_vertices[k]);                                        //insere o vértice atual no vector
+                            VertPass.push(k);                                                            //insere na pilha depois de ter recebido a posição do novo vértice
+
+                            if (k == VertOrig && circ.size() >= 5)                            //verifica se fechou circuito, e também precisa que o tamanho do vector que armazena o circuito seja maior que 5 pra evitar de dizer que encontrou circuito ao voltar pro vértice inicial vindo de um vértice que não oferece boas arestas
+                                formou = true;
+                            break;                                                            //sai do for para parar de procurar outras arestas incidentes no mesmo vértice
+                        }
                     }
                 }
 
                 if (!existe){                                                     //Se não há nenhuma aresta incidente no vértice atual a disposição volta para o vértice anterior
-                    if (VertPass.size() == 1)
+                    if (VertPass.size() == 1)                           //Se estiver no primeiro vértice do grafo por onde começou a procurar circuito. Serve para sair do while que procura circuito quando percebe que não há mais arestas a serem visitadas no grafo inteiro
                         break;
-                    VertPass.pop();                                               //tira a posição vértice atual da pilha, pois este vértice não oferece arestas adequadas
-                    circ.pop_back();                                             //retira o vértice atual
+
+                    VertPass.pop();                                              //tira a posição do vértice atual da pilha, pois este vértice não oferece arestas adequadas
+                    circ.pop_back();                                                 //retira o vértice atual
                     circ.pop_back();                                                 //retira a aresta anterior
-                    k = VertPass.top();                                           //faz o k voltar para o vértice anterior
+                    k = VertPass.top();                                          //faz o k voltar para o vértice anterior
                 }
             }
         }
@@ -383,3 +388,4 @@ int main()
         system("pause");
     }while(true);
 }
+
