@@ -246,6 +246,38 @@ void mostra(grafo g,int op){
     }
 }
 
+void shutdown(){ //facíl de entender, e o prof n precisa saber dessa função
+    int cont=0;
+    char op;
+
+    for(int i=0; i<=8; i++){  //perunta repetida 7 vezes
+        if(cont == 6)
+            cout << "\tMas voce e insistente hein!\n\n";
+
+        if(cont == 7){      //Encerra
+            cout << "\tOK, ja pode sair...\n";
+            exit(0);
+        }
+        if(cont >= 0){
+            cout << "\tTem certeza ";
+            for(int i=0; i<cont; i++){  //Mostra a quantidade de vezes do cont
+                cout << "mesmo ";
+            }
+            cout << "de que quer sair?(S/N): ";
+            cin >> op;
+            cout << "\n";
+        }
+        while(toupper(op) != 'S' && toupper(op) != 'N')
+            cout << "\tOpcao invalida!\n";
+
+        cont++;
+        if(toupper(op) == 'N'){     //se 'N' reinicia a função
+            cout << "\tErro! Tente novamente!\n\n";
+            cont = i = 0;
+        }
+    }
+}
+
 int valor_min(vector<int> key, vector<bool> incluso,int tam){
 int min = INT_MAX, min_index;
 for (int v = 0; v < tam; v++)
@@ -253,7 +285,6 @@ for (int v = 0; v < tam; v++)
         min = key[v], min_index = v;
 return min_index;
 }
-
 
 // Função para construir AGM para um grafo representado por uma matriz de adjacencia
 void agm(grafo g){
@@ -341,7 +372,7 @@ int main()
                 SeqGraus(g);
                 break;
             case 'E':
-                exit(0);
+                shutdown();
             default:
                 cout << "\n\tEscolha uma opção válida: \n\n\t";
         }
