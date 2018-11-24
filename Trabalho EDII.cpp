@@ -11,6 +11,9 @@
 using namespace std;
 void menu(){
     system("cls");
+    cout << "Marcelo - 158114 - 158114@upf.br\n"
+         << "Mateus - 171424\n"
+         << "Weliton - 166404 - 166404@upf.br\n";
     cout << "\n----------------MENU----------------\n\n"
          << "\tA - Árvore Geradora Mínima\n"
          << "\tM - Mostrar Grafo\n"
@@ -20,6 +23,7 @@ void menu(){
          << "\tC - Circuito\n"
          << "\tS - Sequência de Graus\n"
          << "\tE - Encerrar Programa\n"
+         << "\tJ - Adjacencia\n"
          << "\n----------------------------------------\n\n";
 }
 //minha anotação pra eu não esquecer mais por enquanto: Ctrl + R -> Localizar e Substituir
@@ -389,6 +393,30 @@ void agm(grafo g){
     cout << "\n\tTotal: " << soma << "\n";
 }
 
+void adjacencia(grafo g){
+    string a1, a2;
+    int cont = 0, j=0;
+
+    cout << "\tPrimeiro rótulo de aresta: ";
+    cin >> a1;
+    cout << "\tSegundo rótulo de aresta: ";
+    cin >> a2;
+
+    for(int i=0; i<g.TamVert; i++){
+        for(int j=0; j<g.TamVert; j++){
+            if(g.rotulo_arestas[i][j] == a1 || g.rotulo_arestas[i][j] == a2){
+                cont++;
+                if(cont == 2){
+                    cout << "\n\tSão adjacentes!\n";
+                    return;
+                }
+            }
+        }
+        cont = 0;
+    }
+    cout << "\n\tNão sao adjacentes!\n";
+}
+
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
@@ -431,6 +459,9 @@ int main()
                 break;
             case 'S':
                 SeqGraus(g);
+                break;
+            case 'J':
+                adjacencia(g);
                 break;
             case 'E':
                 shutdown();
